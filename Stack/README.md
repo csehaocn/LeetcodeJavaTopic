@@ -6,6 +6,7 @@
     右边还有没有的问题, 可以实现用一次扫描count, 然后第二次扫, 一边扫一边减.
     Similar Problem
         Create Max Number from Array of Digits.
+        402. Remove K Digits
 
 3.  Increasing stack / decreasing stack
     3.1.  寻找(左边/右边)第一个（小于/大于）自己的数
