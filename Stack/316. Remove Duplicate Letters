@@ -69,3 +69,40 @@ public class Solution {
         return res.toString();
     }
 }
+
+public class Solution {
+    public String removeDuplicateLetters(String s) {
+        if(null == s)
+            return null;
+        
+        int len = s.length();
+        if(0 == len)
+            return "";
+        
+        char[] ca = s.toCharArray();
+        int[] cArr = new int[26];
+        for(char c : ca){
+            cArr[c-'a']++;
+        }
+        
+        Stack<Character> st = new Stack<>();
+        boolean[] visited = new boolean[26];
+        for(char c : ca){
+            int idx = c - 'a';
+            cArr[idx]--;
+            if(!visited[idx]){
+                while(!st.isEmpty() && st.peek() > c && cArr[st.peek()-'a'] > 0){
+                    int pidx = st.pop() - 'a';
+                    visited[pidx] = false;
+                }
+                st.push(c);
+                visited[idx] = true;
+            }
+        }
+        StringBuilder b = new StringBuilder();
+        while(!st.isEmpty()){
+            b.append(st.pop());
+        }
+        return b.reverse().toString();
+    }
+}
