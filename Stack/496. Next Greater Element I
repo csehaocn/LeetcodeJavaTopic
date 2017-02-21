@@ -1,0 +1,33 @@
+public class Solution {
+    public int[] nextGreaterElement(int[] findNums, int[] nums) {
+        if(null == findNums || null == nums)
+            return null;
+        int lenF = findNums.length;
+        int lenN = nums.length;
+        if(0 == lenF || 0 == lenN)
+            return new int[0];
+            
+        int[] res = new int[lenF];
+        Map<Integer, Integer> ng = new HashMap<>();
+        Stack<Integer> st = new Stack<>();
+        for(int i = lenN-1; i >= 0; i--){
+            int k = nums[i];
+            // Error: || &&
+            while(!st.isEmpty() && st.peek() < k){
+                st.pop();
+            }
+            if(st.isEmpty()){
+                ng.put(k, -1);
+            }else{
+                ng.put(k, st.peek());
+            }
+            st.push(k);
+        }
+        
+        for(int i = 0; i < lenF; ++i){
+            res[i] = ng.get(findNums[i]);
+        }
+        
+        return res;
+    }
+}
