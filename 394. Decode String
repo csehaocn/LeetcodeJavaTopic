@@ -1,0 +1,49 @@
+public class Solution {
+    public String decodeString(String sr) {
+        if(null == sr)
+            return null;
+        
+        int len = sr.length();
+        if(0 == len)
+            return "";
+            
+        Stack<String> ss = new Stack<>();
+        Stack<Integer> cs = new Stack<>();
+        
+        int c = 1;
+        String s = "";
+        
+        int l = -1;
+        int idx = 0;
+        char[] ca = sr.toCharArray();
+        while(idx < len){
+            char cc = ca[idx];
+            if('[' == cc){
+                ss.push(s);
+                cs.push(c);
+                c = Integer.parseInt(sr.substring(l, idx));
+                s = "";
+                l = -1;
+            }else if(']' == cc){
+                String ns = "";
+                while(c > 0){
+                    ns = ns + s;
+                    c--;
+                }
+                if(!ss.isEmpty()){
+                    s = ss.pop() + ns;
+                    c = cs.pop();
+                }
+            }else if(Character.isDigit(cc)){
+                if(-1 == l){
+                    l = idx;
+                }
+            }else{
+                s += cc;
+            }
+            idx++;
+        }
+        
+        return s;
+    }
+}
