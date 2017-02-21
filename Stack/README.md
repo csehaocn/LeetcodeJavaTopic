@@ -1,7 +1,7 @@
 # Stacks
 题目特征
 1.  寻找(左边/右边)第一个（小于/大于）自己的数
-    注意: 左边第一个最小和右边第一个最大并不是对偶问题, e.g. 1 3 2 中的 1和2.
+    注意: 左边第一个最小和右边第一个最大并不是对偶问题, e.g. 1 3 2 中的 1和2. 但是用左stack和右stack都可以解, 不过一个是递增stack, 一个是递减stack.
     84. Largest Rectangle in Histogram
     42. Trapping Rain Water
     496. Next Greater Element I
