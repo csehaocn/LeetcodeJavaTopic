@@ -1,4 +1,7 @@
 public class Solution {
+
+    // 双stack版本
+    // 又写了一个recursive版本
     public String decodeString(String sr) {
         if(null == sr)
             return null;
@@ -45,5 +48,41 @@ public class Solution {
         }
         
         return s;
+    }
+}
+
+public class Solution {
+    public String decodeString(String s) {
+        if(null == s)
+            return null;
+        int len = s.length();
+        if(0 == len)
+            return "";
+        char[] ca = s.toCharArray();
+        int idx[] = new int[1];
+        idx[0] = 0;
+        return decodeStringAux(ca, idx);
+    }
+    
+    String decodeStringAux(char[] ca, int[] idx){
+        StringBuilder s = new StringBuilder();
+        int rep = 0;
+        while(idx[0] < ca.length && ']' != ca[idx[0]]){
+            if('[' == ca[idx[0]]){
+                idx[0]++;
+                String retS = decodeStringAux(ca, idx);
+                for(int i = 0; i < rep; ++i){
+                    s.append(retS);
+                }
+                rep = 0;
+            }else if(Character.isDigit(ca[idx[0]])){
+                rep = rep * 10 + (ca[idx[0]] - '0');
+            }else{
+                s.append(ca[idx[0]]);
+            }
+            idx[0]++;
+        }
+        // Error: idx[0]++, 这里还是出错了, 原因在于, string 从] return了以后, 被内部的循环统一++了. 
+        return s.toString();
     }
 }
