@@ -1,4 +1,10 @@
 /**
+
+ // discuss里面有一种很蠢的解法, 把探寻的共走丢到hasNext里面做, 
+ // 这是很挫的, 因为并不能保证人会调用hasNext
+ // 但是解法里面把一个list展开, 从尾到头push到stack里面
+ // 其实是一种在某些情况下很便捷的方法. 
+ // 如果知道一定会遍历下去的话.
  * // This is the interface that allows for creating nested lists.
  * // You should not implement it, or speculate about its implementation
  * public interface NestedInteger {
