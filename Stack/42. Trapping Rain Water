@@ -3,6 +3,7 @@ public class Solution {
 
   // 这个题目陷入了双扫的误区, 导致相等高度的板很难处理. 
   // 暂时没想到双扫中相等高度的板 去重的方法, 只用了一个hashmap打了补丁.
+  // 又写了一个单扫的版本, 其实也是不容易作对, 还是出了bug
   
     public int trap(int[] height) {
         // 借这个题 深入理解一下, stack和左右第一个高低数的问题
@@ -93,6 +94,40 @@ public class Solution {
                 bst.push(t+leftH);
             }
         }
+        return res;
+    }
+}
+
+public class Solution {
+    public int trap(int[] height) {
+        if(null == height)
+            return 0;
+        int len = height.length;
+        if(0 == len)
+            return 0;
+        
+        Stack<Integer> st = new Stack<>();
+        // decreasing stack
+        
+        int res = 0;
+        int i = 0; 
+        while(i < len){
+            int h = height[i];
+            int lastH = 0;
+            while(!st.isEmpty() && height[st.peek()] <= h){
+                int nidx = st.pop();
+                int nh = height[nidx];
+                res += (i - nidx - 1) * (nh - lastH);
+                lastH = nh;
+            }
+            // Error: forgot the case when right smaller than left
+            if(!st.isEmpty()){
+                res += (i - st.peek() - 1)*(h - lastH);
+            }
+            st.push(i);
+            i++;
+        }
+        
         return res;
     }
 }
