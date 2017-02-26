@@ -1,3 +1,5 @@
+https://leetcode.com/tag/binary-search/
+
 Binary Search完全是我的弱项, 感觉很多应该用Binary Search的题目, 完全想不到点子上.
   392. Is Subsequence
   follow up
@@ -22,3 +24,8 @@ Binary Search问题的特征
 3.  夹逼定理
     特别是整数的夹逼定理, 有的问题可以用夹逼定理求得唯一整数, 有的问题会夹逼出一个范围, 那么在范围内做binary search就可以了.
       483. Smallest Good Base
+4.  Sorted / Or Increasing decreasing subsequences.
+    Increasing subsequences
+      392. Is Subsequence
+    Sorted
+      275. H-Index II
