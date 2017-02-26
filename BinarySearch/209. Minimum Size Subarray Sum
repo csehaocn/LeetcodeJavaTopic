@@ -1,0 +1,37 @@
+public class Solution {
+// 写一个sliding window能处这么多错, 也是醉了. 写任何程序, 在简单都要认真验证.
+// 经验: 这个paradigm: l, r, r在加过当前数以后, 如果不立即++, 是在window以内的, 切记切记.
+    public int minSubArrayLen(int s, int[] nums) {
+        // sliding window
+        if(null == nums)
+            return 0;
+        if(s <= 0)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        
+        int l = 0;
+        int r = 0;
+        int wSum = 0;
+        int res = Integer.MAX_VALUE;
+        while(r < len){
+            wSum += nums[r];
+            if(wSum >= s){
+                // Error: r - l...., 这里是加过当前数的...
+                res = Math.min(res, r - l + 1);
+                // Error < r..., 这里的r在包含了数字以后, 已经不是边界+1了, 
+                while(l <= r && wSum >= s){
+                    // Error: 我的天, 完全没想到这个case啊, 缩减的时候也要...
+                    //res = Math.min(res, r - l);
+                    wSum -= nums[l];
+                    l++;
+                }
+                res = Math.min(res, r - l + 2);
+            }
+            r++;
+        }
+        // Error: 没考虑到..... 没有超过的情况...
+        return l == 0 && wSum < s ? 0 : res;
+    }
+}
