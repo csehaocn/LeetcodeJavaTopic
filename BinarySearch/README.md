@@ -9,3 +9,7 @@ Binary Search完全是我的弱项, 感觉很多应该用Binary Search的题目,
  
  
  有的题目居然可以用binary search搜索整个Integer空间, 不过其实想想看, 复杂度不过times 32, log(n)真的非常小...
+
+Binary Search问题的特征
+1.  某一个唯独上有上下边界
+2.  有tentative trial的办法或者函数
