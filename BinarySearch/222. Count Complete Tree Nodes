@@ -8,7 +8,8 @@
  * }
  */
 public class Solution {
-    
+    // 这个题目呢, 这次做的时候, 老想着边界, 然后就死命的左子树右探, 右子树坐探
+    // well 其实也是可行的, 可就是, 没想到探完了height, 需要回来重新统计数量, 而不是直接就能得出结果的.
     private int height(TreeNode root){
         if(null == root)
             return 0;
