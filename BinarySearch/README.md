@@ -29,3 +29,7 @@ Binary Search问题的特征
       392. Is Subsequence
     Sorted
       275. H-Index II
+5.  Min / Max. Smallest vs Maximum
+      这种优化问题看起来很像是DP问题
+      但是有的时候也是Binary Searchk可以做的.
+      483. Smallest Good Base
