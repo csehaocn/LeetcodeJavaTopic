@@ -1,0 +1,62 @@
+public class MedianFinder {
+
+    PriorityQueue<Integer> lpq;
+    PriorityQueue<Integer> rpq;
+    
+    /** initialize your data structure here. */
+    public MedianFinder() {
+        // Error: 最小最大堆搞反了。。。。
+        rpq = new PriorityQueue<Integer>();
+        lpq = new PriorityQueue<Integer>(new Comparator<Integer>(){
+            public int compare(Integer l, Integer r){
+                return r - l;
+            }
+        });
+    }
+    
+    public void addNum(int num) {
+        // Error: 这个东西是不能乱加在左边的....
+        // lpq.add(num);
+        // Error: 这个判断也是不对的.......
+        // lpq.isEmpty()
+        // 如果l是空的就加, 那这个数字很大怎么办。。。
+        // 麻烦就在于如果是空的时候怎么办...
+        // 寻找一个优雅的解法, 但是反而出错了..
+        // 到底要不要优雅呢...
+        // 真理只有一个, 不是所有的东西都可以优雅的...
+        // 代码效率, 安全
+        // 安全显然更重要, 完全需要安全安全
+        // 安全第一
+        if(lpq.isEmpty() && rpq.isEmpty() || !rpq.isEmpty() && rpq.peek() <= num){
+            rpq.add(num);
+        }else{
+            lpq.add(num);
+        }
+        while(rpq.size() > lpq.size()){
+            lpq.add(rpq.poll());
+        }
+        while(lpq.size() > rpq.size()){
+            rpq.add(lpq.poll());
+        }
+    }
+    
+    public double findMedian() {
+        if(lpq.size() < rpq.size()){
+            return rpq.peek();
+        }else{
+            if(lpq.isEmpty()){
+                return 0.0;
+            }else{
+                // Error: must divide by 2.0
+                return (lpq.peek() + rpq.peek())/2.0;
+            }
+        }
+    }
+}
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
