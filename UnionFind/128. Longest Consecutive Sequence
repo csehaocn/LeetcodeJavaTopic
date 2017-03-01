@@ -1,0 +1,54 @@
+// 想用hashmap做, 没想到还可以用union find做. 
+
+1. HashMap solution
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        // [100, 4, 200, 1, 3, 2]
+        // 1 - 4, 100, 200
+        // two maps, highlow map and lowhigh map
+        // Error: 完全错了, 没有考虑到可能重复出现的数值的问题...
+        if(null == nums)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        
+        Map<Integer, Integer> lhm = new HashMap<>();
+        Map<Integer, Integer> hlm = new HashMap<>();
+        Set<Integer> visited = new HashSet<>();
+        
+        int res = 0;
+        
+        for(int i : nums){
+            // Error: 完全错了, 没有考虑到可能重复出现的数值的问题...
+            if(visited.contains(i))
+                continue;
+            visited.add(i);
+            
+            int h = i;
+            int l = i;
+            
+            if(i > Integer.MIN_VALUE){
+                if(hlm.containsKey(i-1)){
+                    l = hlm.get(i-1);
+                    hlm.remove(i-1);
+                    lhm.remove(l);
+                }
+            }
+            
+            if(i < Integer.MAX_VALUE){
+                if(lhm.containsKey(i+1)){
+                    h = lhm.get(i+1);
+                    lhm.remove(i+1);
+                    hlm.remove(h);
+                }
+            }
+            
+            lhm.put(l, h);
+            hlm.put(h, l);
+            res = Math.max(res, h-l+1);
+        }
+        
+        return res;
+    }
+}
