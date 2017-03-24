@@ -1,0 +1,48 @@
+public class Solution {
+    
+    private int binarySearchAux(int[] nums, int target){
+        // find the first number greater or equal target
+        // assert null != num 
+        int l = 0;
+        int r = nums.length;
+        
+        while(l < r){
+            
+            int m = l + (r - l) / 2;
+            
+            if(nums[m] >= target){
+                r = m;
+            }else{
+                // left to l are all smaller than target
+                l = m + 1;
+            }            
+        }
+        
+        return l;
+    }
+    
+    public int[] searchRange(int[] nums, int target) {
+        
+        int left = binarySearchAux(nums, target);
+        int right = binarySearchAux(nums, target + 1);
+        
+        if(left == nums.length)
+            left = -1;
+        else if(nums[left] != target){
+            left = -1;
+        }
+        
+        right--;
+        
+        if(right >= 0 && nums[right] != target){
+            right = -1;
+        }
+        
+        int[] res = new int[2];
+        
+        res[0] = left;
+        res[1] = right;
+        return res;
+        
+    }
+}

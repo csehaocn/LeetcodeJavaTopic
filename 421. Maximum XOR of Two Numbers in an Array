@@ -1,0 +1,54 @@
+public class Solution {
+    public int findMaximumXOR(int[] nums) {
+        if(null == nums){
+            return 0;
+        }
+        
+        int max = 0;
+        // Error: mask = 1.....
+        int mask = 0;
+        
+        
+        for(int i = 31; i >= 0; --i){
+            int tmpPrefix = max | 1 << i;
+            mask = mask | 1 << i;
+            Set<Integer> prefixSet = new HashSet<>();
+            for(int n : nums){
+                prefixSet.add(n&mask);
+            }
+            // Test: this is not correct, n cannot ^ with itself
+            // Further: it is infact correct, when n ^ n is always 0, 
+            // result can't be smaller than 0
+            for(int n : prefixSet){
+                if( prefixSet.contains(tmpPrefix ^ n ) ){
+                    max = tmpPrefix;
+                    break;
+                }
+            }
+            
+        }
+        
+        return max;
+        
+        // test:
+        // [3, 10, 5, 25, 2, 8]
+        // 00011, 01010, 00101, 11001, 00010, 01000
+        // i = 4
+        // tmpPrefix = 10000
+        // prefixSet = 10000, 00000
+        // tmpPrefix ^ n 
+        // max = 10000
+        // i = 3
+        // tmpPrefix = 11000
+        // prefixSet = 00000, 01000, 11000
+        // max = 11000
+        // i = 2
+        // prefixSet = 000, 010, 001, 110
+        // tmpPrefix = 11100
+        // i = 1
+        // tmpPrefix = 11110
+        // prefixSet = 0001, 0101, 0101, 1100, 0001, 0100
+        // 
+        
+    }
+}

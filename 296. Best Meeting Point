@@ -1,0 +1,109 @@
+public class Solution {
+//  1.  这个题目想到的切入点还是从sweep line开始的, 因为联想到了sweepline中mahatan distance MST的求解, 算法是一方面, 题目的储存量也非常重要
+//  2.  另外一个切入点是先解决一维, 把问题化简为一个更简单的问题, 寻找突破点
+//  3.  同时, 这里面包含了一个简单的leetcode题目, 寻找一维度上到所有点最短的点, 如果没有做过这个子题目, 很有可能是不会知道这个点是median点, 而以为是average
+//      点的, 所以, 聪明是一方面, 但是积累更加是必不可少啊.
+
+//  4.  这个题目另外的更简便的解法, 利用median点的性质, 不需要找确切的median点, 而利用median两边的成对的点, say l m r, r - l就必然是他们到median点m的
+//      距离之和.
+
+/*
+int l = 0; 
+        int r = n-1;
+        int res = 0;
+        while(l < r){
+            if(0 == cc[l]){
+                l++;
+            }else if(0 == cc[r]){
+                r--;
+            }else{
+                cc[l]--;
+                cc[r]--;
+                res += r - l;
+            }
+        }
+        
+        l = 0; 
+        r = m-1;
+        while(l < r){
+            if(0 == rc[l]){
+                l++;
+            }else if(0 == rc[r]){
+                r--;
+            }else{
+                rc[l]--;
+                rc[r]--;
+                res += r - l;
+            }
+        }
+        
+        return res;
+
+*/
+    public int minTotalDistance(int[][] grid) {
+        if(null == grid)
+            return 0;
+        
+        int m = grid.length;
+        if(0 == m)
+            return 0;
+        int n = grid[0].length;
+        if(0 == n)
+            return 0;
+        
+        // count of nodes at each column    
+        int[] cc = new int[n];
+        // count of nodes at each row
+        int[] rc = new int[m];
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(1 == grid[i][j]){
+                    cc[j]++;
+                    rc[i]++;
+                }
+            }
+        }
+        
+        int l = 0; 
+        int r = n-1;
+        int lTotal = 0;
+        int rTotal = 0;
+        int res = 0;
+        while(l < r){
+            if(0 == cc[l]){
+                l++;
+                res+= lTotal;
+            }else if(0 == cc[r]){
+                r--;
+                res+= rTotal;
+            }else{
+                cc[l]--;
+                lTotal++;
+                cc[r]--;
+                rTotal++;
+            }
+        }
+        
+        l = 0; 
+        r = m-1;
+        lTotal = 0;
+        rTotal = 0;
+        while(l < r){
+            if(0 == rc[l]){
+                l++;
+                res+= lTotal;
+            }else if(0 == rc[r]){
+                r--;
+                res+= rTotal;
+            }else{
+                rc[l]--;
+                lTotal++;
+                rc[r]--;
+                rTotal++;
+            }
+        }
+        
+        return res;
+        
+    }
+}

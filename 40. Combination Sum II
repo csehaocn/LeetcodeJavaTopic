@@ -1,0 +1,45 @@
+public class Solution {
+    
+    // 去重DFS
+    // 虽然postive解决了搜索重点的问题
+    // 但是还是有DFS重复的问题
+    
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(null == candidates)
+            return res;
+        
+        Arrays.sort(candidates);
+        LinkedList<Integer> path = new LinkedList<>();
+            
+        DFS(candidates, 0, 0, target, path, res);
+        
+        return res;
+    }
+    
+    private void DFS(int[] candidates, int idx, int sum, int target, LinkedList<Integer> path, List<List<Integer>> res){
+        
+        if(sum == target){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        
+        if(sum > target || idx >= candidates.length){
+            return;
+        }
+        
+        
+        int j = idx + 1;
+        while(j < candidates.length && candidates[j] == candidates[j-1]) j++;
+        // Once we decide not to use a digit, we won't use next;
+        DFS(candidates, j, sum, target, path, res);
+        
+        sum += candidates[idx];
+        path.add(candidates[idx]);
+        DFS(candidates, idx + 1, sum, target, path, res);
+        path.removeLast();
+        
+        return;
+    }
+    
+}

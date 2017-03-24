@@ -1,0 +1,70 @@
+/**
+
+ // discuss里面有一种很蠢的解法, 把探寻的共走丢到hasNext里面做, 
+ // 这是很挫的, 因为并不能保证人会调用hasNext
+ // 但是解法里面把一个list展开, 从尾到头push到stack里面
+ // 其实是一种在某些情况下很便捷的方法. 
+ // 如果知道一定会遍历下去的话.
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * public interface NestedInteger {
+ *
+ *     // @return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     public boolean isInteger();
+ *
+ *     // @return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // Return null if this NestedInteger holds a nested list
+ *     public Integer getInteger();
+ *
+ *     // @return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // Return null if this NestedInteger holds a single integer
+ *     public List<NestedInteger> getList();
+ * }
+ */
+public class NestedIterator implements Iterator<Integer> {
+
+    // [[1,1],2,[1,1]]
+    Stack<Iterator<NestedInteger>> st;
+    Integer next = null;
+    
+    public NestedIterator(List<NestedInteger> nestedList) {
+        st = new Stack<>();
+        // init next;
+        st.push(nestedList.iterator());
+        next();
+    }
+
+    @Override
+    public Integer next() {
+        Integer ret = next;
+        while(!st.isEmpty()){
+            Iterator<NestedInteger> it = st.peek();
+            if(it.hasNext()){
+                NestedInteger n = it.next();
+                if(n.isInteger()){
+                    next = n.getInteger();
+                    // Error: forgot to break here...
+                    break;
+                }else{
+                    st.push(n.getList().iterator());
+                }
+            }else{
+                st.pop();
+            }
+        }
+        if(st.isEmpty())
+            next = null;
+        return ret;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return null != next;
+    }
+}
+
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i = new NestedIterator(nestedList);
+ * while (i.hasNext()) v[f()] = i.next();
+ */

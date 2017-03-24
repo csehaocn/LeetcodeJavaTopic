@@ -1,0 +1,151 @@
+// 想用hashmap做, 没想到还可以用union find做. 
+// Union find做了一次, 其实标准的Union　Find, Array里面是不存内容的, 因为Array要存parent的index
+// 所以Union Find, Find(), Union()都是要传array的index
+// 对于没有上下限的set也可以做, 只要用hashmap存index就可以了.
+
+
+1. HashMap solution
+public class Solution {
+    public int longestConsecutive(int[] nums) {
+        // [100, 4, 200, 1, 3, 2]
+        // 1 - 4, 100, 200
+        // two maps, highlow map and lowhigh map
+        // Error: 完全错了, 没有考虑到可能重复出现的数值的问题...
+        if(null == nums)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        
+        Map<Integer, Integer> lhm = new HashMap<>();
+        Map<Integer, Integer> hlm = new HashMap<>();
+        Set<Integer> visited = new HashSet<>();
+        
+        int res = 0;
+        
+        for(int i : nums){
+            // Error: 完全错了, 没有考虑到可能重复出现的数值的问题...
+            if(visited.contains(i))
+                continue;
+            visited.add(i);
+            
+            int h = i;
+            int l = i;
+            
+            if(i > Integer.MIN_VALUE){
+                if(hlm.containsKey(i-1)){
+                    l = hlm.get(i-1);
+                    hlm.remove(i-1);
+                    lhm.remove(l);
+                }
+            }
+            
+            if(i < Integer.MAX_VALUE){
+                if(lhm.containsKey(i+1)){
+                    h = lhm.get(i+1);
+                    lhm.remove(i+1);
+                    hlm.remove(h);
+                }
+            }
+            
+            lhm.put(l, h);
+            hlm.put(h, l);
+            res = Math.max(res, h-l+1);
+        }
+        
+        return res;
+    }
+}
+
+public class Solution {
+    
+    class UnionFind{
+        
+        int[] arr;
+        int[] weight;
+        int[] count;
+        
+        public UnionFind(int n){
+            arr = new int[n];
+            weight = new int[n];
+            count = new int[n];
+        }
+        
+        public void initSet(int idx){
+            arr[idx] = idx;
+            weight[idx] = 1;
+            count[idx] = 1;
+        }
+        
+        public int find(int idx){
+            if(arr[idx] != idx)
+                arr[idx] = find(arr[idx]);
+            return arr[idx];
+        }
+        
+        public void union(int l, int r){
+            int lp = find(l);
+            int rp = find(r);
+            int lw = weight[lp];
+            int rw = weight[rp];
+            // weight balance
+            if(lw == rw){
+                arr[lp] = rp;
+                weight[rp] = lw+1;
+                count[rp] = count[lp] + count[rp];
+            }else if(lw < rw){
+                arr[lp] = rp;
+                count[rp] = count[lp] + count[rp];
+            }else{
+                arr[rp] = lp;
+                count[lp] = count[lp] + count[rp];
+            }
+
+            return;
+        }
+        
+        public int getCount(int idx){
+            return count[find(idx)];
+        }
+        
+    }
+    
+    public int longestConsecutive(int[] nums) {
+        // 可以用Union Find做
+        // 带HashMap, Union Find
+        // 纯Union Find
+        
+        if(null == nums)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        HashMap<Integer, Integer> niMap = new HashMap<>();
+
+        UnionFind uf = new UnionFind(len);
+        int index = 0;
+        int res = 0;
+        
+        for(int i : nums){
+            
+            if(!niMap.containsKey(i)){
+                niMap.put(i, index);
+                uf.initSet(index);
+                
+                if(i > Integer.MIN_VALUE && niMap.containsKey(i-1)){
+                    uf.union(index, niMap.get(i-1));
+                }
+                if(i < Integer.MAX_VALUE && niMap.containsKey(i+1)){
+                    uf.union(index, niMap.get(i+1));
+                }
+                
+                res = Math.max(res, uf.getCount(index));
+            }
+            
+            // Error: index++ should put here....
+            index++;
+        }
+        
+        return res;
+    }
+}

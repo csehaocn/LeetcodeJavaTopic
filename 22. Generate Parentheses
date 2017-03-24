@@ -1,0 +1,36 @@
+public class Solution {
+    
+    private void DFS(int n, StringBuilder path, int cl, List<String> res){
+        // cl : count left
+        if(path.length() == 2 * n && 0 == cl){
+            res.add(path.toString());
+            return;
+        }
+        
+        if(path.length() >= 2*n)
+            return;
+        
+        // Error n - path.length();
+        // 我的天, 还是要把n一开始就x2?
+        if(cl > 2*n - path.length())
+            return;
+        
+        if(cl > 0){
+            path.append(')');
+            DFS(n, path, cl-1, res);
+            path.deleteCharAt(path.length()-1);
+        }
+        
+        path.append('(');
+        DFS(n, path, cl+1, res);
+        path.deleteCharAt(path.length()-1);
+        
+        return;
+    }
+    
+    public List<String> generateParenthesis(int n) {
+        List<String> res = new ArrayList<>();
+        DFS(n, new StringBuilder(), 0, res);
+        return res;
+    }
+}

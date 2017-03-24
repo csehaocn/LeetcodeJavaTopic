@@ -1,0 +1,85 @@
+public class Solution {
+// 这个题其实没有什么难的, 变长window, 2 pointers, 作为一个easy题都可以
+// 只是因为每个元素是string, 处理起来要写颇多代码
+// 面试的时候还是需要多用subroutine才好, 不然根本写不完
+
+    public List<Integer> findSubstring(String ts, String[] words) {
+        if(null == words)
+            return null;
+            
+        List<Integer> res = new ArrayList<>();
+        
+        int len = words.length;
+        if(0 == len)
+            return res;
+        int lenS = ts.length();
+        if(0 == lenS)
+            return res;
+        int lenW = words[0].length();
+        if(0 == lenW)
+            return res;
+        int total = lenW*len;
+        Map<String, Integer> ss = new HashMap<>();
+        for(String s : words){
+            if(ss.containsKey(s)){
+                ss.put(s, ss.get(s) + 1);
+            }else{
+                ss.put(s, 1);
+            }
+        }
+        Map<String, Integer> ssc = new HashMap<>(ss);
+        
+        for(int i = 0; i < lenW; ++i){
+            // Error: 在这里不能直接用l作for循环的变量
+            // 因为l在循环体内被改变过了...
+            int l = i;
+            int r = l;
+
+            while(l < lenS && r < lenS){
+                if(r - l == total){
+                    res.add(l);
+                    ss.put(ts.substring(l, l+lenW), 1);
+                    l += lenW;
+                }else{
+                    if(r+lenW > lenS)
+                        break;
+                    String s = ts.substring(r, r+lenW);
+                    if(!ss.containsKey(s)){
+                        String sl = ts.substring(l, l+lenW);
+                        while(l < r){
+                            ss.put(sl, ss.get(sl)+1);
+                            l += lenW;
+                            // Error: 忘记继续更新....
+                            sl = ts.substring(l, l+lenW);
+                        }
+                        // Error: l = r 造成死循环...
+                        l = r+lenW;
+                        r = l;
+                    }else{
+                    
+                        if(ss.get(s) > 0 ){
+                        r += lenW;
+                            ss.put(s, ss.get(s) - 1);
+                        }else{
+                            String sl = ts.substring(l, l+lenW);
+                            while(l < r && ss.get(s) == 0){
+                            ss.put(sl, ss.get(sl) + 1);
+                            l += lenW;
+                            sl = ts.substring(l, l+lenW);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if(r - l == total){
+                res.add(l);
+            }
+            // Error: 结束的时候还得要充值hashMap啊
+            ss = new HashMap<>(ssc);
+        
+            
+        }
+        return res;
+    }
+}

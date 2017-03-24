@@ -1,0 +1,7 @@
+public class Solution {
+// Known as digit root problem
+// 其他有趣的观察包括 10^n ≡ 1 (mod 9)
+    public int addDigits(int num) {
+        return (num -1)% 9+1;
+    }
+}

@@ -1,0 +1,68 @@
+public class Solution {
+    
+    // OK, 这道题目起始给了很多新的东西
+    // 1. 按照substring起始字母进行分类
+    // 2. 当或许一个当前最大substring时, 例如a-f, 其中会有很多小以其他字母开头的的substrings, 例如b-c, 要把这些字母的最长substring一并更新
+    // 3. 最开始总是想省效率, 只要给出所有字母的最长字符串, 然后直接计算出最后的和
+    //    虽然说这其实是可以算的, 但是比较麻烦
+    //    1. 对于字母a-z, a可以覆盖的字母, 依次做最长字符更新, 这个通过一个r下标可以做到.
+    ///   2. 跨越za, 我们要再次对a开始更新, 直到r边界小于当前字符. 这就需要一个变量, 判断是不是第二轮, 以及判断右边界.
+    //    3. 当然这样效率是更高的.
+    
+    public int findSubstringInWraproundString(String p) {
+        
+        if(null == p)
+            return 0;
+        int len = p.length();
+        if(0 == len)
+            return 0;
+            
+        int i = 0;
+        int j = 1;
+        
+        int res = 0;
+        
+        int[] cArr = new int[26];
+        
+        while(i < len){
+            
+            while(i < len && (p.charAt(i) > 'z' || p.charAt(i) < 'a') ){
+                i++;
+            }
+            
+            if(i >= len)
+                break;;
+            
+            j = i+1;
+            
+            while(j < len && p.charAt(j) <= 'z' && p.charAt(j) >= 'a' ){
+                
+                int d = p.charAt(j) - p.charAt(j-1);
+                if(d == 1 || d == -25){
+                    j++;
+                }else{
+                    break;
+                }
+                
+            }
+        
+            while(i < j){
+                // 这里用于更新substring例如从a-f之间的每个起始字母
+                cArr[p.charAt(i) - 'a'] = Math.max(cArr[p.charAt(i) - 'a'], j - i);
+                i++;
+            }
+            
+        }
+        
+        for(int k = 0; k < 26; ++k){
+            // 我的天, 之前脑子秀逗了, 不停的想把例如abcd以及其所有substring都添加进去
+            // 然后在从cdef减去cd的部分
+            // 但是只要把所有的substring按其开头的字母分类, 不就没有这么多麻烦了么...
+            res += cArr[k];
+        }
+        
+        return res;
+        
+    }
+    
+}

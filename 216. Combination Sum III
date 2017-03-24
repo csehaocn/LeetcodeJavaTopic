@@ -1,0 +1,32 @@
+public class Solution {
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res = new ArrayList<>();
+        // boarder
+        
+        LinkedList<Integer> path = new LinkedList<>();
+        
+        DFS(k, n, 1, path, 0, res);
+        
+        return res;
+    }
+    
+    private void DFS(int k, int n, int idx, LinkedList<Integer> path, int sum, List<List<Integer>> res){
+        
+        if(sum == n && path.size() == k ){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        
+        // idx > n, sum > n more to optimize according to path size and idx
+        if(path.size() == k || sum > n || idx > 9 ){
+            return;
+        } 
+        
+        DFS(k, n, idx + 1, path, sum, res);
+        path.add(idx);
+        sum += idx;
+        DFS(k, n, idx + 1, path, sum, res);
+        path.removeLast();
+        return;
+    }
+}

@@ -1,0 +1,65 @@
+public class HitCounter {
+
+    // 这个题写得bug层出不穷
+    // 1. 是因为想一下写出最优
+    // 2. 是根本就没有想清楚.
+    int cts;
+    // current time stamp
+    Deque<Integer> tsq;
+    // ts queue
+    Deque<Integer> cq;
+    // count queue
+    int total;
+    
+    static final int window = 300;
+    // time stamp count
+    /** Initialize your data structure here. */
+    public HitCounter() {
+        cts = 1;
+        tsq = new LinkedList<>();
+        cq = new LinkedList<>();
+        total = 0;
+        
+    }
+    
+    /** Record a hit.
+        @param timestamp - The current timestamp (in seconds granularity). */
+    public void hit(int timestamp) {
+        if(!tsq.isEmpty() && tsq.getLast() == timestamp){
+            // Error: 我的天, if条件式都能写错
+            // if(tsq.getLast() == timestamp)
+            cq.offer(cq.removeLast()+1);
+        }else{
+            tsq.offer(timestamp);
+            cq.offer(1);
+        }
+        total++;
+        cts = timestamp;
+        removeHead();
+    }
+    
+    private void removeHead(){
+        while(!tsq.isEmpty() && tsq.getFirst() <= cts - window ){
+            int i = tsq.removeFirst();
+            System.out.println(i);
+            System.out.println(cq.getFirst());
+            total -= cq.removeFirst();
+        }
+        return;
+    }
+    
+    /** Return the number of hits in the past 5 minutes.
+        @param timestamp - The current timestamp (in seconds granularity). */
+    public int getHits(int timestamp) {
+        cts = timestamp;
+        removeHead();
+        return total;
+    }
+}
+
+/**
+ * Your HitCounter object will be instantiated and called as such:
+ * HitCounter obj = new HitCounter();
+ * obj.hit(timestamp);
+ * int param_2 = obj.getHits(timestamp);
+ */

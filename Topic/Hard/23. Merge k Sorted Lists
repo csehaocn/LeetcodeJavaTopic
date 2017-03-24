@@ -1,0 +1,45 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        if(null == lists)
+            return null;
+            
+        ListNode dummy = new ListNode(0);
+        ListNode c = dummy;
+        
+        if(lists.length == 0)
+            return null;
+        
+        // Error: illegal argument exception for list.length == 0
+        PriorityQueue<ListNode> pq = new PriorityQueue<>(lists.length, new Comparator<ListNode>(){
+            
+                public int compare(ListNode l, ListNode r){
+                    return l.val - r.val;
+                }
+            
+            });
+        
+        // Error: [[]] 空list的元素取出来是null吗？
+        for(ListNode n: lists){
+            if(null != n)
+                pq.add(n);
+        }
+        
+        while(!pq.isEmpty()){
+            ListNode n = pq.poll();
+            if(null != n.next)
+                pq.add(n.next);
+            c.next = n;
+            c = c.next;
+        }
+        
+        return dummy.next;
+    }
+}

@@ -1,0 +1,17 @@
+public class Solution {
+    public int minCost(int[][] costs) {
+        int cr = 0;
+        int cg = 0;
+        int cb = 0;
+        for(int[] ia : costs){
+           int crn = Math.min(cb, cg) + ia[0];
+           int cgn = Math.min(cb, cr) + ia[1];
+           int cbn = Math.min(cg, cr) + ia[2];
+           cr = crn;
+           cg = cgn;
+           cb = cbn;
+        }
+        
+        return Math.min(cr, Math.min(cg, cb));
+    }
+}

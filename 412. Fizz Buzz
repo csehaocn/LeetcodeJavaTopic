@@ -1,0 +1,63 @@
+public class Solution {
+    
+    // 用一点另类的方法
+    // 类似于求100内所有质数的古方法
+    // 就xx内3和5的倍数
+    // 不同的是, 先3后5的话
+    // 每次赋值的时候要判断现在的值是什么也是麻烦
+    // 用两个frontier指针就可以了
+    // 只是未必会很快
+    // 事实上 相当慢.....
+    
+
+    /*
+    
+    public List<String> fizzBuzz(int n) {
+        List<String> res = new ArrayList<>(n);
+        // 事实上我的想法有点2, 
+        // 前面有这个循环在这里, 直接加总是最好的
+        // 如果不想用mod, 那么设置一个3位周期的fizz变量和5位周期的buzz变量也可以
+        // 不同的是, 还是3O(n). 
+        for(int i = 1; i <= n; ++i){
+            res.add("" + i);
+        }
+        
+        int i = 2;
+        int j = 4;
+        
+        while(i < n || j < n){
+            if(i == j){
+                res.set(i, "FizzBuzz");
+                i+=3;
+                j+=5;
+            }else if(i < j){
+                res.set(i, "Fizz");
+                i+=3;
+            }else{
+                res.set(j, "Buzz");
+                j+= 5;
+            }
+        }
+        
+        return res;
+        
+    }
+    */
+    public List<String> fizzBuzz(int n) {
+        
+        List<String> res = new ArrayList<String>();
+        
+        for(int i = 1; i <= n; ++i){
+            if(0 == i%3 && 0 == i%5){
+                res.add("FizzBuzz");
+            }else if(0 == i%3){
+                res.add("Fizz");
+            }else if(0 == i%5){
+                res.add("Buzz");
+            }else{
+                res.add(""+ i);
+            }
+        }
+        return res;
+    }
+}

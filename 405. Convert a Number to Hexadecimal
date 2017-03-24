@@ -1,0 +1,25 @@
+public class Solution {
+    // 这里面还是有很多边界条件错误的.
+    // 尤其在要求不能有leading zero的情况下.
+    // 忘记判断0 .
+    public String toHex(int num) {
+        if(0 == num)
+            return "0";
+        StringBuilder b = new StringBuilder();
+        // Error: while num > 0
+        // num can be negative number
+        while(num != 0){
+            int i = num & 15;
+            if(i < 10){
+                b.append(i);
+            }else{
+                b.append((char)('a' + (i - 10)));
+            }
+            // Error: num >>= 4
+            // wrong operation for negative number
+            num >>>= 4;
+        }
+        
+        return b.reverse().toString();
+    }
+}

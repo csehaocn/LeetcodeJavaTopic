@@ -1,0 +1,77 @@
+public class Solution {
+    
+    // 非常简单, 就是写起来麻烦
+    // 另外一种做法是, 用hashmap<character, row> 记录.
+    // 另外Arraylist.toArray() 可以返回答案
+    private static final int rows = 3;
+    
+    public String[] findWords(String[] words) {
+        if(null == words)
+            return null;
+            
+        String[] kc = {"qwertyuiop", "asdfghjkl", "zxcvbnm"};
+        
+        ArrayList<Set<Character>> ksArr = new ArrayList<>();
+        for(int i = 0; i < rows; ++i){
+            Set<Character> ks = new HashSet<>();
+            for(Character c : kc[i].toCharArray()){
+                ks.add(c);
+            }
+            ksArr.add(ks);
+        }
+        
+        ArrayList<String> res = new ArrayList<>();
+        for(String s : words){
+            if(0 != s.length()){
+                String sl = s.toLowerCase();
+                boolean flag = true;
+                for(Set<Character> sc : ksArr){
+                    if(sc.contains(sl.charAt(0))){
+                        for(int i = 1; i < sl.length(); ++i){
+                            if(!sc.contains(sl.charAt(i))){
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if(flag)
+                            res.add(s);
+                        else
+                            break;
+                    }
+                }
+            }
+        }
+        
+        String[] ret = new String[res.size()];
+        for(int i = 0; i < res.size(); ++i){
+            ret[i] = res.get(i);
+        }
+        
+        return ret;
+    }
+}
+
+public class Solution {
+    public String[] findWords(String[] words) {
+        String[] strs = {"QWERTYUIOP","ASDFGHJKL","ZXCVBNM"};
+        Map<Character, Integer> map = new HashMap<>();
+        for(int i = 0; i<strs.length; i++){
+            for(char c: strs[i].toCharArray()){
+                map.put(c, i);//put <char, rowIndex> pair into the map
+            }
+        }
+        List<String> res = new LinkedList<>();
+        for(String w: words){
+            if(w.equals("")) continue;
+            int index = map.get(w.toUpperCase().charAt(0));
+            for(char c: w.toUpperCase().toCharArray()){
+                if(map.get(c)!=index){
+                    index = -1; //don't need a boolean flag. 
+                    break;
+                }
+            }
+            if(index!=-1) res.add(w);//if index != -1, this is a valid string
+        }
+        return res.toArray(new String[0]);
+    }
+}

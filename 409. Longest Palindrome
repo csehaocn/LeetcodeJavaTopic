@@ -1,0 +1,27 @@
+public class Solution {
+    public int longestPalindrome(String s) {
+        
+        if(null == s)
+            return 0;
+        int len = s.length();
+        if(0 == len)
+            return 0;
+        int[] cArr = new int[256];
+        for(char c : s.toCharArray()){
+            cArr[(int)c]++;
+        }
+        
+        boolean center = false;
+        int res = 0;
+        
+        for(int i : cArr){
+            if(1 == i%2){
+                center = true;
+            }
+            res += i/2;
+        }
+        
+        // Errorl always braecket ( ? : )
+        return res*2 + (center? 1: 0);
+    }
+}

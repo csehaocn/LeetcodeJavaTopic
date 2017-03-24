@@ -1,0 +1,93 @@
+public class Solution {
+    
+    class Point{
+        
+        int x;
+        int y;
+        
+        Point(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+        
+        public boolean equals(Object o){
+            // Error: !在instanceof面前要用()
+            if(!(o instanceof Point))
+                return false;
+            
+            Point p = (Point)o;
+            return p.x == x && p.y == y;
+            
+        }
+        
+        public int hashCode(){
+            return x * 37 + y;
+        }
+        
+    }
+    
+    public List<int[]> pacificAtlantic(int[][] matrix) {
+        if(null == matrix)
+            return null;
+        
+        List<int[]> res = new ArrayList<>();
+        
+        int m = matrix.length;
+        if(0 == m)
+            return res;
+        int n = matrix[0].length;
+        if(0 == n)
+            return res;
+            
+        Set<Point> pac = new HashSet<>();
+        
+        for(int i = 0; i < m; ++i){
+            DFS(i, 0, m, n, pac, matrix);
+        }
+        
+        for(int j = 0; j < n; ++j){
+            DFS(0, j, m, n, pac, matrix);
+        }
+        
+        Set<Point> alt = new HashSet<>();
+        
+        for(int i = 0; i < m; ++i){
+            DFS(i, n-1, m, n, alt, matrix);
+        }
+        for(int j = 0; j < n; ++j){
+            DFS(m-1, j, m, n, alt, matrix);
+        }
+        
+        pac.retainAll(alt);
+        
+        for(Point p : pac){
+            res.add(new int[]{p.x, p.y});
+        }
+        return res;
+    }
+    
+    private void DFS(int x, int y, int m, int n, Set<Point> pac, int[][] matrix){
+        // first judge, then explore is better
+        Point p = new Point(x, y);
+        if(pac.contains(p)){
+            return;
+        }
+        else{
+            pac.add(p);
+            if(x > 0 && matrix[x-1][y] >= matrix[x][y]){
+                DFS(x-1, y, m, n, pac, matrix);
+            }
+            if(y > 0 && matrix[x][y-1] >= matrix[x][y]){
+                DFS(x, y-1, m, n, pac, matrix);
+            }
+            if(x < m-1 && matrix[x+1][y] >= matrix[x][y]){
+                DFS(x+1, y, m, n, pac, matrix);
+            }
+            if(y < n-1 && matrix[x][y+1] >= matrix[x][y]){
+                DFS(x, y+1, m, n, pac, matrix);
+            }
+        }
+        return;
+        
+    }
+}

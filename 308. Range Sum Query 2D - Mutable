@@ -1,0 +1,109 @@
+public class NumMatrix {
+
+    // 实际run的速度并没有比col row快, 
+    // 初始化可能要take太多时间
+    // O(mnlgmlgn)
+    int matrix[][];
+    int tree[][];
+    int m;
+    int n;
+    
+    public NumMatrix(int[][] matrix) {
+        
+        if(null == matrix)
+            return;
+            
+        int m = matrix.length;
+        if(0 == m)
+            return;
+        int n = matrix[0].length;
+        if(0 == n)
+            return;
+        
+        this.matrix = matrix;
+        this.tree = new int[m+1][n+1];
+        this.m = m;
+        this.n = n;
+        
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                updateDiff(i, j, matrix[i][j]);    
+            }
+        }
+        
+        return;
+    }
+
+    public void update(int row, int col, int val) {
+        
+        // Error: forgot update matrix itself...
+        // Error: update this value first is wrong.....
+        // matrix[row][col] = val;
+        // e.g. idx = 10001010
+        // assert: no overflow
+        int diff = val - matrix[row][col];
+        
+        updateDiff(row, col, diff);
+        
+        matrix[row][col] = val;
+
+        return;
+    }
+    
+    private void updateDiff(int row, int col, int diff){
+        
+        row++;
+        col++;
+        
+        //System.out.println(diff);
+        
+        for(int i = row; i <= m; i += (i & -i)){
+            for(int j = col; j <= n; j += (j & -j)){
+                tree[i][j] += diff;
+            }
+        }
+        
+        return;
+    }
+
+
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        
+        row1--;
+        col1--;
+        
+        return sumLeftUpRegion(row2, col2) - sumLeftUpRegion(row2, col1) - sumLeftUpRegion(row1, col2) + sumLeftUpRegion(row1, col1);
+        
+    }
+    
+    public int sumLeftUpRegion(int row, int col){
+        
+        row++;
+        col++;
+        
+        if(row <=0 || col <= 0){
+            return 0;
+        }
+        
+        int sum = 0;
+        
+        // Error : i <= m
+        //         j <= n
+        for(int i = row; i > 0; i -= (i & -i)){
+            for(int j = col; j > 0; j -= (j & -j)){
+                sum += tree[i][j];
+            }
+        }
+        
+        return sum;    
+        
+    }
+    
+}
+
+
+// Your NumMatrix object will be instantiated and called as such:
+// NumMatrix numMatrix = new NumMatrix(matrix);
+// numMatrix.sumRegion(0, 1, 2, 3);
+// numMatrix.update(1, 1, 10);
+// numMatrix.sumRegion(1, 2, 3, 4);

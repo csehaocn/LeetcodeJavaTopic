@@ -1,0 +1,26 @@
+public class Solution {
+// 虽然是很简单的题目
+// 但是他的dual greedy也是存在的
+// 先满足greedy最小的child with 最小的cookie
+
+    public int findContentChildren(int[] g, int[] s) {
+        if(null == g || null == s)
+            return 0;
+            
+        Arrays.sort(g);
+        Arrays.sort(s);
+        int i = g.length-1;
+        int j = s.length-1;
+        int res = 0;
+        while(j >= 0 && i >= 0){
+            if(s[j] >= g[i]){
+                res++;
+                i--;
+                j--;
+            }else{
+                i--;
+            }
+        }
+        return res;
+    }
+}

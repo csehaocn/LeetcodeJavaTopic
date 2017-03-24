@@ -1,0 +1,87 @@
+public class Solution {
+    
+    // 就因为一个多个空格的问题 bug多的没了边
+    
+    // 这个锅可以由双重while来背
+    // 之前的一些code 确实由于双重while简便了很多
+    // 但是由于 while{ while; while; }的结构
+    // 中间需要加一些判断, 其实完全不够简洁. 
+    
+    // 这里实在不太好总结, 如何才能避免这种状况, 理论上双重循环有一些不得不用的地方
+    // 不是这样的话就尽量避免吧?
+    
+    private void reverse(char[] ca, int i, int j){
+        
+        if(i >= j || i >= ca.length)
+            return;
+        // Error: forgot about j--......
+        j--;
+        
+        while(i < j){
+            char t = ca[i];
+            ca[i] = ca[j];
+            ca[j] = t;
+            i++;
+            j--;
+        }
+        
+        return;
+    }
+    
+    public String reverseWords(String s) {
+        if(null == s)
+            return null;
+        int len = s.length();
+        if(0 == len)
+            return s;
+        
+        char[] ca = s.toCharArray();
+        
+        reverse(ca, 0, len);
+        
+        System.out.println(new String(ca));
+        
+        int i = 0;
+        int j = i;
+        
+        while(i < len){
+            
+            while(i < len && ' ' == ca[i]){
+                i++;
+            }
+            if(i >= len)
+                break;
+            j = i + 1;
+            while(j < len && ' ' != ca[j]){
+                j++;
+            }
+            reverse(ca, i, j);
+            
+            i = j;
+        }
+        
+        i = 0;
+        j = i;
+        while(j < len){
+            while(j < len && ' ' == ca[j])
+                j++;
+            if(j >= len)
+                break;
+            while(j < len && ' ' != ca[j]){
+                ca[i] = ca[j];
+                j++;
+                i++;
+            }
+            if(i < len)
+                ca[i] = ' ';
+            i++;
+            j++;
+        }
+        
+        if(i == 0)
+            return "";
+        else
+            return new String(ca).substring(0, i-1);
+        
+    }
+}

@@ -1,0 +1,77 @@
+public class Solution {
+    // 嗯 注意这里的non negative
+    // 就应该想到 positive和0
+    // 0的特殊, 在于
+    // 这里带0的DFS以前还真没遇到过
+    // 因为条件并不能在=处终止
+    // 但是不终止也可能会导致很多重复.
+    public int findTargetSumWays(int[] nums, int S) {
+        // 1. Sum all, num *2
+        // 2. DFS to sum - target
+        
+        if(null == nums)
+            return 0;
+        Arrays.sort(nums);
+        int len = nums.length;
+        int sum = 0;
+        for(int i = 0; i < len; ++i){
+            sum += nums[i];
+            nums[i] <<= 1;
+        }
+        
+        int target = sum - S;
+        
+        return DFS(nums, 0, 0, target) + (target == 0 ? 1 : 0);
+    }
+    
+    private int DFS(int[] nums, int idx, int pSum, int target){
+        
+        if(idx >= nums.length)
+            return 0;
+        
+        int res = 0;
+        res += DFS(nums, idx+1, pSum, target);
+            
+        pSum += nums[idx];
+        if(pSum == target) 
+            res++;
+        if(pSum > target)
+            return res;
+        res += DFS(nums, idx+1, pSum, target);
+        return res;
+            
+        
+        /* 这个DFS 虽然work, 但是感觉有点蠢, 替代的方法是在DFS里, 开头添加元素 
+            这应该是DFS的另一种范式,  针对存在的0元素, 只有在每次增加一个元素时, 再给出一种解答
+        int res = 0;
+        
+        if(pSum > target){
+            // Error: 这里 >= 是错的
+            // 在这个DFS里, == 并不能返回 
+            // 因为num的元素可能为0.
+            
+            // 然而不在==处返回, DFS会产生重复集合的问题. 
+            // 对，如果没有0元素，还真的就是可以在 pSum == target时退出
+            // 然而有0元素时，判断就复杂起来了.
+            return res;
+        }
+        
+        if(idx >= nums.length)
+            return res;
+        else{
+            if(pSum <= target)
+                res += DFS(nums, idx+1, pSum, target);
+            pSum += nums[idx];
+            if(pSum == target)
+                res++;
+            if(pSum <= target)
+                res += DFS(nums, idx+1, pSum, target);
+            pSum -= nums[idx];
+            
+            
+            return res;
+        }
+        */
+        
+    }
+}

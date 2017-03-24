@@ -1,0 +1,63 @@
+public class Solution {
+    public String simplifyPath(String path) {
+        
+        if(null == path)
+            return null;
+        
+        int len = path.length();
+        if(0 == len)
+            return "/";
+            
+        Stack<String> st = new Stack<>();
+        if(path.charAt(0) != '/'){
+            return "/";
+        }
+        
+        char[] ca = path.toCharArray();
+        int i = 1;
+        while(i < len && ca[i] == '/'){
+            i++;
+        }
+        
+        while(i < len){
+            
+            int j = i;
+            while(j < len && ca[j] != '/'){
+                j++;
+            }
+            
+            String f = path.substring(i, j);
+            if(f.equals(".") || f.isEmpty()){
+                ;
+            }else if(f.equals("..")){
+                // Error: OK 这个不是invalid input
+                // 在root做..操作还是root
+                // 
+                if(!st.isEmpty()){
+                    st.pop();
+                }
+            }else{
+                st.push(f);
+            }
+            
+            i = j + 1;
+            j = i;
+            
+        }
+        
+        if(st.isEmpty())
+            return "/";
+        
+        Stack<String> b = new Stack<>();
+        while(!st.isEmpty()){
+            b.push(st.pop());
+        }
+        
+        StringBuilder builder = new StringBuilder();
+        
+        while(!b.isEmpty())
+            builder.append("/" + b.pop());
+            
+        return builder.toString();
+    }
+}

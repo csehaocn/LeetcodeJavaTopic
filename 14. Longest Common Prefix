@@ -1,0 +1,42 @@
+public class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        
+        if(null == strs)
+            return null;
+            
+        int len = strs.length;
+        
+        if(0 == len)
+            return "";
+            
+        int i = 0;
+        
+        while(true){
+            
+            boolean eq = true;
+            
+            if(i >= strs[0].length())
+                break;
+
+            char c = strs[0].charAt(i);
+            
+            for(String s : strs){
+                if(s.length() <= i || c != s.charAt(i) ){
+                    // Error: 这里的break是不对的 
+                    // 实际的情况是要break2层
+                    eq = false;
+                    break;
+                }
+            }
+            
+            if(!eq)
+                break;
+            
+            i++;
+            
+        }
+        
+        return strs[0].substring(0, i);
+        
+    }
+}

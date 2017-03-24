@@ -1,0 +1,97 @@
+public class Solution {
+    
+    // 这是做元素清理的另外一种方法, 维持一个0区间, 由i, j界定, 在数组的中段 向后移动.
+    // 相比双指针, 在尾部建立区间的方法, 这种方法可以维护原有序列
+    // 那么应该也有第三种方法, 把0移动到序列首部, 循环不变式是, i指针的左侧全部都是0
+    // 这种i指针左侧的循环不变式, 因为初始值为空数组, 所以很容易应用到许多不同的场景中. 
+    
+    // 确实 如果用i, j的左区间做循环不变式, 是不需要先初始化i的. 
+    // 好处, 
+    //  1. i, j本身所在的数组必然valid
+    //  2. j处在区间+1, 同时也是下一个要处理的数字
+    //  3. 循环不变式完整维护, 从初始开始.
+    public void moveZeroes(int[] nums) {
+        if(null == nums)
+            return;
+        int i = 0;
+        int j = 0;
+        while(j < nums.length){
+            if(0 == nums[j]){
+                j++;
+            }else{
+                if(i != j){
+                    nums[i] = nums[i] ^ nums[j];
+                    nums[j] = nums[i] ^ nums[j];
+                    nums[i] = nums[i] ^ nums[j];
+                    i++;
+                }else{
+                    i++;
+                    j++;
+                }
+            }
+        }
+        
+        return;
+    }
+}
+
+public class Solution {
+    
+    // 还是那回事, 看似简单的题目, 其实边界条件和特殊情况
+    // 也不是那么容易考虑的
+    // 特别是有双边界和其维持的区间的情况下
+    // 在这里, 因为是维持的一个区间, 所以l不会重置并超过r,
+    // 所以只要检查r就可以了.
+    
+    // 事实上要写更加简洁的代码的话
+    // 从头开始就一直不停的覆盖自己也是一个可行的方法.
+    // 最后在把尾部置零
+    
+    private void swap(int[] nums, int i, int j){
+        if(i == j){
+            return;
+        }
+        nums[i] = nums[i] ^ nums[j];
+        nums[j] = nums[i] ^ nums[j];
+        nums[i] = nums[i] ^ nums[j];
+        return;
+    }
+    
+    public void moveZeroes(int[] nums) {
+        if(null == nums)
+            return;
+        int len = nums.length;
+        
+        int l = 0; 
+        int r = 0;
+        while(l < len && 0 != nums[l]){
+            l++;
+        }
+        
+        r = l + 1;
+        while(r < len){
+            if(0 == nums[r]){
+                r++;
+            }else{
+                swap(nums, l, r);
+                l++;
+                r++;
+            }
+        }
+        
+        return;
+    }
+}
+
+public void moveZeroes(int[] nums) {
+    if (nums == null || nums.length == 0) return;        
+
+    int insertPos = 0;
+    for (int num: nums) {
+        if (num != 0) nums[insertPos++] = num;
+    }        
+
+    while (insertPos < nums.length) {
+        nums[insertPos++] = 0;
+    }
+}

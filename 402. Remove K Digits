@@ -1,0 +1,108 @@
+public class Solution {
+  // 问题多的地方还是在于边界条件,  heading zero之类的地方.
+    public String removeKdigits(String num, int k) {
+        
+        if(null == num)
+            return null;
+        
+        Deque<Integer> q = new LinkedList<>();
+        TreeMap<Integer, Integer> tm = new TreeMap<>();
+        int len = num.length();
+        if(len == k)
+            return "0";
+        
+        char[] ca = num.toCharArray();
+        
+        /*
+        for(int i = 0; i <= k; ++i){
+            int d = ca[i] - '0';
+            q.add(d);
+            if(!tm.containsKey(d)){
+                tm.put(d, 1);
+            }else{
+                tm.put(d, tm.get(d)+1);
+            }
+        }
+        */
+        
+        StringBuilder b = new StringBuilder();
+        
+        for(int i = 0; i < len; ++i){
+            int d = ca[i] - '0';
+            q.add(d);
+            if(!tm.containsKey(d)){
+                tm.put(d, 1);
+            }else{
+                tm.put(d, tm.get(d)+1);
+            }
+            if(i >= k){
+                int key = tm.firstKey();
+                b.append(key);
+                int pk = 0;
+                do{
+                    pk = q.removeFirst();
+                    tm.put(pk, tm.get(pk) - 1);
+                    if(0 == tm.get(pk)){
+                        tm.remove(pk);
+                    }
+                }while(pk != key);
+            }
+        }
+        
+        // Error: 没有管= len的情况
+        // 因为这段代码是先操作, 增加的
+        // 其实还是先增加在操作的代码好
+        // 而且 这段代码还是在 k == len的情况下越界了. 
+        
+        /*
+        
+        for(int i = k + 1; i <= len; ++i){
+            int key = tm.firstKey();
+            //System.out.println("key = " + key);
+            b.append(key);
+            
+            // Error: 这段代码是错的, 因为每次你这么做,
+            // 都必须在对应的map中操作一次
+            // 而这段代码并没有
+            
+            int pk = q.removeFirst();
+            while(pk != key){
+                tm.put(pk, tm.get(pk) - 1);
+                if(0 == tm.get(pk)){
+                    tm.remove(pk);
+                }
+                pk = q.removeFirst();
+            }
+            
+            int pk = 0;
+            do{
+                pk = q.removeFirst();
+                tm.put(pk, tm.get(pk) - 1);
+                if(0 == tm.get(pk)){
+                    tm.remove(pk);
+                }
+            }while(pk != key);
+            
+            if(i < len){
+            int d = ca[i] - '0';
+            q.add(d);
+            if(!tm.containsKey(d)){
+                tm.put(d, 1);
+            }else{
+                tm.put(d, tm.get(d)+1);
+            }
+            }
+        }
+        */
+        
+        // Error: forgot about heading zeros
+        int i = 0;
+        // Error: forgot about i < b.length();
+        while(i < b.length() && b.charAt(i) == '0'){
+            i++;
+        }
+        
+        return i == b.length() ? "0" : b.substring(i, b.length());
+        
+    }
+}

@@ -1,0 +1,46 @@
+public class Solution {
+    int[] rows;
+    int[] cols;
+    int[] diags;
+    int[] rdiags;
+    
+    public int totalNQueens(int n) {
+        if(n < 0)
+            return 0;
+            
+        // dp arrays
+        rows = new int[n];
+        cols = new int[n];
+        diags = new int[2*n-1];
+        rdiags = new int[2*n-1];
+        
+        return DFS(n, 0);
+    }
+    
+    private int DFS(int n, int c){
+        int res = 0;
+        // Error: n+1 = c
+        if(n == c)
+            return 1;
+        for(int r = 0; r < n; ++r){
+            if(validate(n, r, c)){
+                set(n, r, c, 1);
+                res += DFS(n, c+1);
+                set(n, r, c, 0);
+            }
+        }
+        return res;
+    }
+    
+    private boolean validate(int n, int r, int c){
+        return 0 == rows[r] && 0 == cols[c] && 0 == diags[n-r+c-1] && 0 == rdiags[r+c];
+    }
+    
+    private void set(int n, int r, int c, int val){
+        rows[r] = val;
+        cols[c] = val;
+        diags[n-r+c-1] = val;
+        rdiags[r+c] = val;
+        return;
+    }
+}

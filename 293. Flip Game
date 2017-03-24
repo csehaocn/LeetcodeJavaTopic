@@ -1,0 +1,41 @@
+public class Solution {
+
+/* 其他的做法
+i = s.iindexof(, i+1)挺巧妙的 相当于自增 然后重新赋值.
+
+public List<String> generatePossibleNextMoves(String s) {
+    List list = new ArrayList();
+    for (int i=-1; (i = s.indexOf("++", i+1)) >= 0; )
+        list.add(s.substring(0, i) + "--" + s.substring(i+2));
+    return list;
+}
+
+
+*/
+    public List<String> generatePossibleNextMoves(String s) {
+        if(null == s)
+            return null;
+        
+        int len = s.length();
+        List<String> res = new ArrayList<>();
+        
+        
+        if(len <= 1){
+            return res;
+        }
+        
+        char[] ca = s.toCharArray();
+        for(int i = 1; i < len; ++i){
+            if(ca[i] == '+' && ca[i-1] == '+'){
+                if(ca[i] == '+'){
+                    ca[i] = '-';
+                    ca[i-1] = '-';
+                    res.add(new String(ca));
+                    ca[i] = '+';
+                    ca[i-1] = '+';
+                }
+            }
+        }
+        return res;
+    }
+}

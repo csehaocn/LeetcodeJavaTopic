@@ -1,0 +1,30 @@
+public class Solution {
+
+// 这种stack+有起有伏的数组, 应用在数组中寻找下一个, 大于或者小于当前元素的元素里.
+// 可以见到max rectangle in matrix以及 max rectangle in histogram
+
+    public int[] nextGreaterElement(int[] findNums, int[] nums) {
+        if(null == findNums || null == nums)
+            return null;
+        
+        Stack<Integer> st = new Stack<>();
+        Map<Integer, Integer> nidxMap = new HashMap<>();
+        
+        for(int i : nums){
+            
+            while(!st.isEmpty() && st.peek() < i){
+                nidxMap.put(st.pop(), i);
+            }
+            st.add(i);
+            
+        }
+        
+        int[] res = new int[findNums.length];
+        
+        for(int j = 0; j < findNums.length; ++j){
+            res[j] = nidxMap.getOrDefault(findNums[j], -1);
+        }
+        
+        return res;
+    }
+}

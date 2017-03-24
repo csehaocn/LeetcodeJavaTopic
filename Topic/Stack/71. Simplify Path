@@ -1,0 +1,55 @@
+public class Solution {
+    public String simplifyPath(String path) {
+        if(null == path)
+            return null;
+        // /
+        // /a
+        // /..
+        // abd/
+        // //
+        // /adf/
+        
+        Stack<String> st = new Stack<>();
+        int len = path.length();
+        if(0 == len)
+            return "";
+            
+        int l = 0;
+        while(l < len && path.charAt(l) == '/')
+            l++;
+        int i = l;
+        
+        // Error: 还是出了bug, 因为设置i = l + 1, 结果导致i直接溢出 i == len
+        // 而没有进入最后一个循环.
+        // 要注意这种i== len的时候也要处理的情况
+        
+        // 更重要的恐怕是应该设置l < len
+        while(l < len){
+            while(i < len && path.charAt(i) != '/')
+                i++;
+            String sub = path.substring(l, i);
+            if(sub.equals(".") || sub.equals("")){
+                ;
+            }else if(sub.equals("..")){
+                if(!st.isEmpty())
+                    st.pop();
+            }else{
+                st.push(sub);
+            }
+            l = i;
+            while(l < len && path.charAt(l) == '/')
+                l++;
+            i = l;
+        }
+        
+        Stack<String> r = new Stack<>();
+        while(!st.isEmpty())
+            r.push(st.pop());
+        StringBuilder builder = new StringBuilder();
+        while(!r.isEmpty()){
+            builder.append("/" + r.pop());
+        }
+        
+        return builder.length() == 0 ? "/" : builder.toString();
+    }
+}

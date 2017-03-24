@@ -1,0 +1,64 @@
+public class Solution {
+
+//  一个简单的dp问题, 
+// 1. 用set来做dp似乎更好, 因为不太容易很好的判断speed的上下限范围, 同时很多speed是无法被访问到的, 空间上, 效率上应该更有一些
+//    这种用array+list/set/map entry的DP其他题目里也有遇到过, 值得借鉴
+// 2. 这个题目从头部和从尾部做dp并不是对称的, 因为头部限定了速度1, 而尾部无法限定速度, 也就是说, 尾部搜索会搜的范围更大，至少需要初始遍历尾部与所有stone.
+//    这个题目从头部开解是比较容易想到的, 但是有很多题目, 既然不对称存在, 那么就有从尾部解更容易的方法存在
+
+
+public boolean canCross(int[] stones) {
+        if(null == stones)
+            return false;
+        int len = stones.length;
+        if(0 == len)
+            return false;
+
+        // cannot cross set array
+        ArrayList<HashSet<Integer>> cnArr = new ArrayList<>();
+        
+        for(int i = 0; i < len; ++i){
+            cnArr.add(new HashSet<>());
+        }
+        
+        if(1 == len)
+            return true;
+            
+        for(int i = 1; i < len; ++i){
+            if(stones[i] == stones[0]+1){
+                boolean r = DP(stones, i, 1, cnArr);
+                if(r)
+                    return true;
+            }
+        }
+        
+        return false;
+        
+    }
+    
+    private boolean DP(int[] stones, int idx, int speed, ArrayList<HashSet<Integer>> cnArr){
+        
+        if(cnArr.get(idx).contains(speed)){
+            return false;
+        }
+        
+        if(idx == stones.length-1)
+            return true;
+        
+        int l = Math.max(1, speed - 1);
+        int r = speed + 1;
+        int cp = stones[idx];
+        for(int i = idx + 1; i < stones.length; ++i){
+            if(stones[i] > cp + r)
+                break;
+            else if(stones[i] >= cp + l){
+                boolean ret = DP(stones, i, stones[i] - stones[idx], cnArr);
+                if(ret)
+                    return ret;
+            }
+        }
+        
+        cnArr.get(idx).add(speed);
+        return false;
+    }
+}

@@ -1,0 +1,38 @@
+public class Solution {
+    public int jump(int[] nums) {
+        // e.g. [2,3,1,1,4]
+        if(null == nums)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        // Error: 最终还是没有习惯检查corner case
+        // 有的时候 corner case真的不是想当然就能对的.
+        if(1 == len)
+            return 0;
+        int j = 0;
+        
+        int c = 0;
+        int l = 0; 
+        int r = 1;
+        
+        while(true){
+            int nr = r;
+            for(int i = l; i < r; ++i){
+                // Error : Math.max(nr, i + nums[i])+1
+                // 蠢货, 每次比较一次以后都加了1.....
+                nr = Math.max(nr, i + nums[i] + 1);
+            }
+            if(nr == r)
+                return -1;
+            else{
+                l = r;
+                r = nr;
+                c++;
+            }
+            if(nr >=len )
+                return c;
+        }
+        
+    }
+}

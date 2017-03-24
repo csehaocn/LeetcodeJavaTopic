@@ -1,0 +1,62 @@
+
+public class Solution {
+
+    //System.out.println("dt = " + dt);
+    // 1. 当然除了设置比特以外, 其他人的解法里, 有采用Arrays.toString()来做HashMap的key的方法. 这个在数量比较大, bit无法胜任的时候可以使用.
+    
+        // 这种解法系统的一个漏洞是
+        // 当总之大于可取的数字的总和的时候
+        // 及无论哪个选手都无法获胜的时候
+        // (注意 当不允许重复数字的时候, 才会出现这种情况, 所以跳转过来的时候, 忘记了这个边界条件了)
+        // 因为最后一名队员总是输, 所以前一名队员就以为自己获胜了....
+       // 因为最后一名队员总是输, 所以前一名队员就以为自己获胜了....
+        // 又实验了一下int[] dp和boolean[] dp的版本, 还是超空间了. 
+        // 看来在这样的dp里面，确实是有很多entry是不会被访问到的?
+    
+    private int convertToKey(int mask, int dt, int offSet){
+        return (mask << offSet) + dt;
+    }
+    
+    private boolean canIWinUtil(int mc, int dt, int mask, int offSet, Map<Integer, Boolean> dp){
+
+        int mKey = convertToKey(mask, dt, offSet);
+
+        if(!dp.containsKey(mKey)){
+            dp.put(mKey, false);
+            for(int i = 1; i <= mc; ++i){
+                if((mask & (1<<(i-1))) == 0){
+                    // can use
+                    if(i>=dt){
+                        dp.put(mKey, true);
+                        break;
+                    }else{
+                        mask |= (1<<(i-1));
+                        if(!canIWinUtil(mc, dt - i, mask, offSet, dp)){
+                            mask &= ~(1<<(i-1));
+                            dp.put(mKey, true);
+                            break;
+                        }
+                        mask &= ~(1<<(i-1));
+                    }
+                }
+            }
+        }
+        
+        return dp.get(mKey);
+    }
+    
+    public boolean canIWin(int maxChoosableInteger, int desiredTotal) {
+
+	    int sum = maxChoosableInteger*(maxChoosableInteger+1)/2;
+        if(sum < desiredTotal)
+            return false;
+
+        int bitRangeTotal = ((int)(Math.log(desiredTotal) / Math.log(2))) + 1;
+        
+        Map<Integer, Boolean> dp = new HashMap<>();
+        
+        return canIWinUtil(maxChoosableInteger, desiredTotal, 0, bitRangeTotal, dp);
+        
+    }
+}
+

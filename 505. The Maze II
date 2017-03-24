@@ -1,0 +1,121 @@
+public class Solution {
+    
+    // 这个题目的实质是Dijstra Algorithm极其实现
+    // 因为Java的TreeMap和PriorityQueue都不支持DecKey和IncKey操作
+    // 因此这里需要用Lazy Deletion和PriorityQueue实现.
+    class Point{
+        
+        int i;
+        int j;
+        int v;
+        
+        public Point(int i, int j, int v){
+            this.i = i;
+            this.j = j;
+            this.v = v;
+        }
+        
+    }
+    
+    private boolean equalPoint(int[] l, int[] r){
+        return l[0] == r[0] && l[1] == r[1];
+    }
+    
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        if(null == maze)
+            return 0;
+        int m = maze.length;
+        if(0 == m)
+            return 0;
+        int n = maze[0].length;
+        if(0 == n)
+            return 0;
+        
+        int[][] mazeP = new int[m][n];
+        
+        PriorityQueue<Point> pq = new PriorityQueue<>(new Comparator<Point>(){
+            
+            public int compare(Point l, Point r){
+                return l.v - r.v;
+            }
+            
+        });
+        pq.add(new Point(start[0], start[1], 1));
+        
+        while(!pq.isEmpty()){
+            
+            Point p = pq.poll();
+            
+            int x = p.i;
+            int y = p.j;
+            
+            if(x == destination[0] && y == destination[1]){
+                return mazeP[x][y] - 1;
+            }
+            
+            if(0 != mazeP[x][y] && p.v > mazeP[x][y]){
+                continue;
+            }
+            
+            while(x >= 0 && 0 == maze[x][y]){
+                x--;
+            }
+            x++;
+            if(x != p.i){
+                int newW = p.v + Math.abs(x - p.i);
+                if(0 == mazeP[x][y] || mazeP[x][y] > newW ){
+                    mazeP[x][y] = newW;
+                    pq.add(new Point(x, y, newW));
+                }
+            }
+            
+            x = p.i;
+            y = p.j;
+            
+            while(y >= 0 && 0 == maze[x][y]){
+                y--;
+            }
+            y++;
+            if(y != p.j){
+                int newW = p.v + Math.abs(y - p.j);
+                if(0 == mazeP[x][y] || mazeP[x][y] > newW ){
+                    mazeP[x][y] = newW;
+                    pq.add(new Point(x, y, newW));
+                }
+            }
+            
+            x = p.i;
+            y = p.j;
+            
+            while(x < m && 0 == maze[x][y]){
+                x++;
+            }
+            x--;
+            if(x != p.i){
+                int newW = p.v + Math.abs(x - p.i);
+                if(0 == mazeP[x][y] || mazeP[x][y] > newW ){
+                    mazeP[x][y] = newW;
+                    pq.add(new Point(x, y, newW));
+                }
+            }
+            
+            x = p.i;
+            y = p.j;
+            
+            while(y < n && 0 == maze[x][y]){
+                y++;
+            }
+            y--;
+            if(y != p.j){
+                int newW = p.v + Math.abs(y - p.j);
+                if(0 == mazeP[x][y] || mazeP[x][y] > newW ){
+                    mazeP[x][y] = newW;
+                    pq.add(new Point(x, y, newW));
+                }
+            }
+            
+        }
+        
+        return -1;
+    }
+}

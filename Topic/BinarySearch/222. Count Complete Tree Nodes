@@ -1,0 +1,36 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    // 这个题目呢, 这次做的时候, 老想着边界, 然后就死命的左子树右探, 右子树坐探
+    // well 其实也是可行的, 可就是, 没想到探完了height, 需要回来重新统计数量, 而不是直接就能得出结果的.
+    private int height(TreeNode root){
+        if(null == root)
+            return 0;
+        int h = 1;
+        while(null != root.left){
+            root = root.left;
+            h++;
+        }
+        return h;
+    }
+    
+    
+    public int countNodes(TreeNode root) {
+        
+        if(null == root)
+            return 0;
+        int hl = height(root.left);
+        int hr = height(root.right);
+        if(hl == hr)
+            return countNodes(root.right) + (1 << hl);
+        else
+            return countNodes(root.left) + (1 << hr);
+    }
+}

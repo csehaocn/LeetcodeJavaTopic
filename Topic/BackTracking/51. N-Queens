@@ -1,0 +1,70 @@
+public class Solution {
+    
+    int[] rows;
+    int[] cols;
+    int[] diags;
+    int[] rdiags;
+    char[][] board;
+    int n;
+    
+    public List<List<String>> solveNQueens(int n) {
+        if(n < 0)
+            return new ArrayList<>();
+        
+            
+        board = new char[n][n];
+        for(int i = 0; i < n; ++i)
+        for(int j = 0; j < n; ++j)
+            board[i][j] = '.';
+        // dp util arrays
+        rows = new int[n];
+        cols = new int[n];
+        diags = new int[2*n-1];
+        rdiags = new int[2*n-1];
+        List<List<String>> res = new ArrayList<>();
+        this.n = n;
+        
+        DFS(n, 0, res);
+        
+        return res;
+    }
+    
+    private void DFS(int n, int c, List<List<String>> res){
+        if(c >= n){
+            addRes(res);
+            return;
+        }
+        for(int r = 0; r < n; ++r){
+            if(validate(n, r, c)){
+                set(n, r, c, 1);
+                DFS(n, c+1, res);
+                set(n, r, c, 0);
+            }
+        }
+    }
+    
+    private boolean validate(int n, int r, int c){
+        return 0 == rows[r] && 0 == cols[c] && 0 == diags[n-1-r+c] && 0 == rdiags[r+c];
+    }
+    
+    private void set(int n, int r, int c, int val){
+        rows[r] = val;
+        cols[c] = val;
+        diags[n-1-r+c] = val;
+        rdiags[r+c] = val;
+        board[r][c] = (val == 1 ? 'Q' : '.');
+        return;
+    }
+    
+    private void addRes(List<List<String>> res){
+        
+            List<String> s = new ArrayList<>();
+            for(char[] ca : board){
+                s.add(new String(ca));
+            }
+            
+            res.add(s);
+            return;
+        
+    }
+}

@@ -1,0 +1,286 @@
+public class Twitter {
+    
+        Set<Integer> userIDSet;
+        
+        List<Integer> tweetList;
+        
+        Map<Integer, List<Integer>> userTweets;
+        
+        Map<Integer, Set<Integer>> followMap;
+
+    /** Initialize your data structure here. */
+    public Twitter() {
+        
+        userIDSet = new HashSet<Integer>();
+        
+        tweetList = new ArrayList<Integer>();
+        
+        userTweets = new HashMap<Integer, List<Integer>>();
+        
+        followMap = new HashMap<Integer, Set<Integer>>();
+    }
+    
+    /** Compose a new tweet. */
+    public void postTweet(int userId, int tweetId) {
+        
+        if(!userTweets.containsKey(userId)){
+            userTweets.put(userId, new ArrayList<Integer>());
+        }
+        
+        tweetList.add(tweetId);
+        
+        userTweets.get(userId).add(tweetList.size()-1);
+        
+    }
+    
+    private void addTweets(List<Integer> ts, Queue<Integer> pq){
+        for(Integer t : ts){
+            pq.offer(t);
+            if(pq.size() > 10){
+                pq.poll();
+            }
+        }
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    public List<Integer> getNewsFeed(int userId) {
+        
+        List<Integer> res = new ArrayList<Integer>();
+        
+        Queue<Integer> pq = new PriorityQueue<Integer>();
+        
+        if(userTweets.containsKey(userId)){
+            List<Integer> tSelf = userTweets.get(userId);
+            addTweets(tSelf, pq);
+        }
+        
+        if(followMap.containsKey(userId)){
+            Set<Integer> friendL = followMap.get(userId);
+            for(Integer f : friendL){
+                if(userTweets.containsKey(f)){
+                    addTweets(userTweets.get(f), pq);
+                }
+            }
+        }
+        
+        while( pq.size() > 0){
+            Integer t = pq.poll();
+            //System.out.println(t + " " + tweetList.get(t));
+            res.add(tweetList.get(t));
+        }
+        
+        /* Error: does not follow the order of priority queue
+        for(Integer t : pq){
+            System.out.println(t + " " + tweetList.get(t));
+            res.add(tweetList.get(t));
+        }
+        */
+
+        Collections.reverse(res);
+        return res;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    public void follow(int followerId, int followeeId) {
+        
+        if(followerId == followeeId)
+            return;
+        
+        if(!followMap.containsKey(followerId)){
+            followMap.put(followerId, new HashSet<Integer>());
+        }
+        followMap.get(followerId).add(followeeId);
+
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    public void unfollow(int followerId, int followeeId) {
+        // Error: follow themself, get duplicated answer in news feeds.
+        if(followerId == followeeId)
+            return;
+            
+        if(followMap.containsKey(followerId)){
+            followMap.get(followerId).remove(followeeId);
+        }
+    }
+}
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter obj = new Twitter();
+ * obj.postTweet(userId,tweetId);
+ * List<Integer> param_2 = obj.getNewsFeed(userId);
+ * obj.follow(followerId,followeeId);
+ * obj.unfollow(followerId,followeeId);
+ */
+ 
+ 
+ 
+public class Twitter {
+    
+    // 第二遍做
+    // 1. 新的一点是, 比起之前把所有list都过一遍, 才能读出feeds, 这次用了priorityqueue合并
+    //    经验是, 这个并不容易做, 需要做一个iterator的wapper才行
+    //    因为每次从priorityqueue读出数据以后, 并不能读出其在list中的下一个值
+    
+    // 2. 注意follow自己的情况, 因为follow或者不follow自己要做到表现一样, 有几种选择
+    //    1. 让每个初始化的人都follow自己, 但是一个follow都没有的人, 都没有初始化过. 
+    //    2. follow不follow随意, 但是在做feeds的时候, 用判断式来去重一下自己
+    
+    // 3. userTwits的选择从ArrayList, 到LinkedList, 到ArrayList, 到LinkedList
+    //    这些东西其实应该在一开始就想清楚的
+    
+    // 4. 存一个twit id的queue, 然后user twits只存其index, 因为假设twit queue是永远不会缩小和删除的, 这个范式虽然不能适用于删除的情况, 然是还是挺有用的, 不知道应该取名叫什么.
+    
+    Map<Integer, Set<Integer> > followMap;
+    Map<Integer, LinkedList<Integer> > userTwits; 
+    List<Integer> twitsList;
+    int ts;
+    // using ts to fetch twits
+    
+    /** Initialize your data structure here. */
+    public Twitter() {
+        
+        followMap = new HashMap<>();
+        userTwits = new HashMap<>();
+        twitsList = new ArrayList<>();
+        ts = 0;
+    }
+    
+    /** Compose a new tweet. */
+    public void postTweet(int userId, int tweetId) {
+        
+        if(!userTwits.containsKey(userId)){
+            // Error: put it here is wrong....
+            // especially for complicated systems.
+            // Even this small example results wrong.
+            // followMap.put(userId, new HashSet<>());
+            userTwits.put(userId, new LinkedList<>());
+        }
+
+        twitsList.add(tweetId);
+        
+        userTwits.get(userId).addFirst(ts);
+        ts++;
+        
+        return;
+        
+    }
+    
+    class IteratorWithValue{
+        Iterator<Integer> it;
+        Integer val;
+        
+        public IteratorWithValue(Iterator<Integer> it){
+            this.it = it;
+            if(it.hasNext())
+                val = it.next();
+            else
+                val = null;
+            return;
+        }
+        
+        public boolean hasNext(){
+            return it.hasNext();
+        }
+        
+    }
+    
+    private List<Integer> fetchTopTs(List<List<Integer> > twitsList, int top){
+        
+        List<Integer> res = new ArrayList<>();
+
+        PriorityQueue<IteratorWithValue> pq = new PriorityQueue<>(new Comparator<IteratorWithValue>(){
+            public int compare(IteratorWithValue l, IteratorWithValue r){
+                return r.val - l.val;
+            }
+        }
+        );
+        
+        for(List<Integer> l : twitsList){
+            System.out.println(l);
+            
+            Iterator<Integer> it = l.iterator();
+            if(it.hasNext()){
+                pq.offer(new IteratorWithValue(it));
+            }
+        }
+
+        while(top > 0 && !pq.isEmpty()){
+            
+            IteratorWithValue itv = pq.poll();
+            
+            res.add(itv.val);
+            top--;
+            if(itv.hasNext()){
+                itv.val = itv.it.next();
+                pq.offer(itv);
+            }            
+        }
+        return res;
+    }
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    public List<Integer> getNewsFeed(int userId) {
+
+        // Error: here, even without follow map
+        // people still have feeds of themself.
+        //if(!followMap.containsKey(userId))
+        //    return new ArrayList<Integer>();
+        List<List<Integer> > twitsListList = new ArrayList<>();
+        if(followMap.containsKey(userId)){
+            Set<Integer> friends = followMap.get(userId);
+            for(Integer f : friends){
+                // OK. This is wrong when someone follow themself.
+                // If you don't follow yourself, you have your own
+                // If you follow yourself, you still have your own....
+                // revise here is easier...
+                if(f == userId)
+                    continue;
+                if(userTwits.containsKey(f)){
+                    twitsListList.add(userTwits.get(f));
+                }
+            }
+        }
+        // OK. This is wrong when someone follow themself.
+        // If you don't follow yourself, you have your own
+        // If you follow yourself, you still have your own....
+        if(userTwits.containsKey(userId)){
+            twitsListList.add(userTwits.get(userId));
+        }
+        List<Integer> tsList = fetchTopTs(twitsListList, 10);
+        List<Integer> res = new ArrayList<>();
+        for(int ts : tsList){
+            res.add(twitsList.get(ts));
+        }
+        return res;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    public void follow(int followerId, int followeeId) {
+        if(!followMap.containsKey(followerId)){
+            followMap.put(followerId, new HashSet<Integer>());
+        }
+        
+        followMap.get(followerId).add(followeeId);
+        
+        return;
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    public void unfollow(int followerId, int followeeId) {
+        if(followMap.containsKey(followerId)){
+            followMap.get(followerId).remove(followeeId);
+        }
+        return;
+    }
+}
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter obj = new Twitter();
+ * obj.postTweet(userId,tweetId);
+ * List<Integer> param_2 = obj.getNewsFeed(userId);
+ * obj.follow(followerId,followeeId);
+ * obj.unfollow(followerId,followeeId);
+ */

@@ -1,0 +1,34 @@
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    // 看来TreeMap的应用还是非常多的
+    // 在当年不懂TreeMap的时候不会做也是正常
+    public int[] findRightInterval(Interval[] intervals) {
+        if(null == intervals)
+            return null;
+        TreeMap<Integer, Integer> sMap = new TreeMap<>();
+        int len = intervals.length;
+        for(int i = 0; i < len; ++i){
+            sMap.put(intervals[i].start, i);
+        }
+        
+        int[] res = new int[len];
+        
+        for(int i = 0; i < len; ++i){
+            Map.Entry<Integer, Integer> se = sMap.ceilingEntry(intervals[i].end);
+            if(null == se)
+                res[i] = -1;
+            else
+                res[i] = se.getValue();
+        }
+        
+        return res;
+    }
+}

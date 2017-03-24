@@ -1,0 +1,25 @@
+public class Solution {
+// 这个确实是我做的, 但是完全不记得了...
+    public int[] constructRectangle(int area) {
+        int[] res = new int[2];
+        int q = (int)Math.sqrt(area);
+        while(area % q != 0){
+            q--;
+        }
+        res[0] = area/q;
+        res[1] = q;
+        return res;
+    }
+}
+
+public class Solution {
+// 很简单, 但是可能的错误包括使用w++, 这样的loop方向对于大的prime number来说是更大的.
+// 之前没想到这一点, 只想到下限可能更近了..
+    public int[] constructRectangle(int area) {
+        int w = (int)Math.sqrt(area);
+        while(w > 0 && 0 != area % w){
+            w--;
+        }
+        return new int[]{area/w, w};
+    }
+}

@@ -1,0 +1,25 @@
+public class Solution {
+    public int[] getModifiedArray(int length, int[][] updates) {
+        if(null == updates)
+            return null;
+        int[] t = new int[length];
+        
+        for(int i = 0; i < updates.length; ++i){
+            int l = updates[i][0];
+            int r = updates[i][1];
+            int u = updates[i][2];
+            if(l > 0)
+                t[l-1] -= u;
+            t[r] += u;
+        }
+        
+        int res = 0;
+        
+        for(int i = t.length-1; i >= 0; --i){
+            res += t[i];
+            t[i] = res;
+        }
+        
+        return t;
+    }
+}

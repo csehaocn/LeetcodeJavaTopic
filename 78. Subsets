@@ -1,0 +1,70 @@
+public class Solution {
+    
+    /*
+    
+    private void DFS(int[] nums, int idx, LinkedList<Integer> path, List<List<Integer>> res){
+        
+        if(idx == nums.length)
+            return;
+        
+        DFS(nums, idx+1, path, res);
+        
+        path.add(nums[idx]);
+        res.add(new ArrayList<>(path));
+        DFS(nums, idx+1, path, res);
+        path.removeLast();
+        
+        return; 
+        
+    }
+    
+    public List<List<Integer>> subsets(int[] nums) {
+        
+        List<List<Integer>> res = new ArrayList<>();
+        if(null == nums)
+            return res;
+            
+        res.add(new ArrayList<>());
+        LinkedList<Integer> path = new LinkedList<>();
+        
+        DFS(nums, 0, path, res);
+        
+        return res;
+        
+    }
+    */
+    
+    private void DFS(int[] nums, int idx, LinkedList<Integer> path, List<List<Integer>> res){
+        
+        res.add(new ArrayList<>(path));
+        
+        // Error: 这句应该在添加答案之后
+        // 因为这里idx的定义
+        // 不是在当前添加元素
+        // 而是元素添加之后, 下一个应该添加的元素
+        //  其实这句根本就不需要, 后面的for loop可以搞定
+        //if(idx >= nums.length)
+        //    return;
+        
+        for(int i = idx; i < nums.length; ++i){
+            path.add(nums[i]);
+            DFS(nums, i+1, path, res);
+            path.removeLast();
+        }
+        
+        return;
+    }
+    
+    public List<List<Integer>> subsets(int[] nums) {
+        
+        List<List<Integer>> res = new ArrayList<>();
+        if(null == nums)
+            return res;
+        
+        LinkedList<Integer> path = new LinkedList<>();
+        
+        DFS(nums, 0, path, res);
+        
+        return res;
+    }
+}

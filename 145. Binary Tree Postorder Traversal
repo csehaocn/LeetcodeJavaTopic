@@ -1,0 +1,222 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    // 让我们来试试所有可能的solution
+    // 1. reverse order and reverse
+    // 2. stack without c node
+    // 3. postorder, with stack
+    // 4. postorder, with two stacks
+    
+    /* 1. reverse order and reverse
+    
+    public List<Integer> postorderTraversal(TreeNode root) {
+        
+        List<Integer> res = new ArrayList<Integer>();
+        
+        Stack<TreeNode> st = new Stack<>();
+        
+        TreeNode c = root;
+        
+        while(null != c || !st.isEmpty()){
+            // left right root -> root right left
+            
+            if(null == c){
+                c = st.pop();
+            }else{
+                res.add(c.val);
+                st.push(c.left);
+                c = c.right;
+            }
+            
+        }
+        
+        Collections.reverse(res);
+        
+        return res;
+    }
+    */
+    
+    /* 2. stack without c node
+    public List<Integer> postorderTraversal(TreeNode root) {
+        
+        LinkedList<Integer> res = new LinkedList<>();
+        if(null == root)
+            return res;
+        
+        Stack<TreeNode> st = new Stack<>();
+        st.add(root);
+        
+        while(!st.isEmpty()){
+            TreeNode c = st.pop();
+            if(null != c){
+                res.addFirst(c.val);
+                st.push(c.left);
+                st.push(c.right);
+            }
+        }
+        
+        return res;
+    }
+    
+    */
+    
+    /* 3. postorder, with stack
+    
+    // 因为c不能为null一起其他的一些关系, 
+    // 这个版本要写的简短简介, 不难也不容易, 要想简介
+    // 就需要把所有的
+    // 1. 向上的
+    // 2. 向下向左的
+    // 3. 向下向右的
+    // 条件归并在一起
+    // 这些条件感觉, 因为c不能为null, 所有有一种五花八门, 乱七八糟的感觉, 几个条件之间八竿子打不着
+    // 但是总体来说, 因为能分成上面的3种情况, 所以还是有归并并简洁代码的可能性的.
+    // 当然更稳妥的方式是用多层条件大循环, 加sub函数. 
+    
+    public List<Integer> postorderTraversal(TreeNode root) {
+        
+        List<Integer> res = new ArrayList<>();
+        
+        TreeNode c = root;
+        // Error: 这里pre设置成null, 会影响左右向上的判断.
+        TreeNode pre = new TreeNode(0);
+        Stack<TreeNode> st = new Stack<>();
+    
+        // c不能为null的版本是比较难写的
+        // 因为判断条件只能是!st.isEmpty()
+        // 刚开始就不满足
+        
+        // 但是如果让null == c
+        // pre就有可能是null
+        // 那么判断pre c关系的判断就很麻烦.
+        
+        // 其他人的答案的做法, 是先向stack里面push root
+        // 然后每次 c都peek() stack. 
+        // 其实相当于没有用到c
+        
+        // 另外的做法是可以用dummy node
+        // 1. 纯粹填充stack的dummy node
+        // 2. dummy.left = root 的dummynode
+        
+        // Error: 同时要注意到, 因为没有用c作为while循环的判断
+        // root == null的边界条件会开始出错了
+        
+        if(null == root)
+            return res;
+        
+        // 1. 纯粹填充stack的dummy node
+        st.add(pre);
+        
+        while(!st.isEmpty()){
+            // Error: 这里的错误在于, 如果pre的初始值是null, 那么当root.right也是null的时候这个判断是有问题的.
+            if( pre == c.right || (null == c.left && null == c.right) || (pre == c.left && null == c.right) ){
+                res.add(c.val);
+                pre = c;
+                c = st.pop();
+            }else{
+                // either c.left or c.right is not null
+                // Error: 以为向右下的条件在之前判断过了, 其实完全需要向左或者向右的判断.
+                
+                // Error: 忘记null == c.left
+                if(null == c.left || pre == c.left && null != c.right){
+                    // 这里, 这2个statement不能加在前面
+                    // 因为if中需要判断
+                    st.push(c);
+                    pre = c;
+                    c = c.right;
+                }else{
+                    st.push(c);
+                    pre = c;
+                    c = c.left;
+                }
+            }
+            
+        }
+        
+        return res;
+    }
+    */
+    
+    /* 关于类似的方法，这里有一段代码
+    // 其中关于向上判断的这段代码挺难想到的
+    
+    // 1. node c在向左时push, 但是只有在从右返回时才pop
+    // 2. 是不是从右返回, 用node c于stack.peek()的关系来判断. 
+    
+    // 其做法是, 像preorder和inorder一样, 用c用stack, 到了null就pop
+    // 但是pop了以后有两条路可以走
+    // 1. 从右边返回, 继续pop
+    // 2. 从左边返回, st.pop st.push c = c.right
+    //    在这种情况下, 我们就没有必要pop再push了, 直接peek一下了事.
+    
+    // 这种思考方式和inorder遍历其实是类似的, 不同的是, inorder里, pop完以后, c总是向右走
+    // c可能是null也可能不是, 在这里, c还是null. 维持不变, 而只用stack.peek和pre判断关系...
+    // stack.peek()才是c, 而c相当于一个向上或者向下的标记. 
+    
+    public List<Integer> postorderTraversal(TreeNode root) {  
+	    List<Integer> res=new ArrayList<Integer>();  
+	    if(root==null) return res;  
+	    Stack<TreeNode> st=new Stack<TreeNode>();  
+	    TreeNode pre=null;  
+	    while(root!=null || !st.isEmpty()){
+	    // root, 即node c只可能是左边的null
+	    	if(root!=null){  
+    			st.push(root);  
+    			root=root.left;  
+	    	}  
+    		else{  
+    			if(st.peek().right==null || st.peek().right==pre){  
+      				pre=st.pop();  
+    				res.add(pre.val);  
+    			}  
+    			else root=st.peek().right;  
+    		}  
+    	}  
+    	return res;  
+    }
+    
+   */
+   
+   /* 4. postorder with 2 stacks
+   */
+    public List<Integer> postorderTraversal(TreeNode root) {  
+        List<Integer> res = new ArrayList<>();
+        if(null == root)
+            return res;
+        Stack<TreeNode> tst = new Stack<>();
+        Stack<Boolean> bst = new Stack<>();
+        
+        TreeNode c = root;
+        
+        while(null != c || !tst.isEmpty()){
+            
+            if(null == c){
+                c = tst.pop();
+                boolean left = bst.pop();
+                if(left){
+                    tst.push(c);
+                    c = c.right;
+                    bst.push(false);
+                }else{
+                    res.add(c.val);
+                    c = null;
+                }
+            }else{
+                tst.push(c);
+                c = c.left;
+                bst.push(true);
+            }
+            
+        }
+        
+        return res;
+       
+   }
+}

@@ -1,0 +1,48 @@
+public class Solution {
+  // 最开始做的时候, 忘记了需要双stack, 怎么想也是双stack, 但是没实际开始做之前, 还是会想不清楚的.
+    public String decodeString(String s) {
+        if(null == s)
+            return null;
+        char[] ca = s.toCharArray();
+        int len = ca.length;
+        if(0 == len)
+            return "";
+        
+        Stack<Integer> rs = new Stack<Integer>();
+        Stack<String> ss = new Stack<String>();
+        int l = 0;
+        int r = 0;
+        int d = 0;
+        while(r < len){
+            char c = ca[r];
+            if('[' == c){
+                rs.push(d);
+                d = 0;
+                ss.push("");
+            }else if(']' == c){
+                int rep = rs.pop();
+                String cs = ss.pop();
+                String ncs = "";
+                while(rep > 0){
+                    ncs = ncs + cs;
+                    rep--;
+                }
+                if(!ss.isEmpty()){
+                    ncs = ss.pop() + ncs;
+                }
+                ss.push(ncs);
+            }else if(Character.isDigit(c)){
+                d = d * 10 + (c - '0');
+            }else{
+                if(ss.isEmpty()){
+                    ss.push("" + c);
+                }else{
+                    ss.push(ss.pop()+c);
+                }
+            }
+            r++;
+        }
+        
+        return ss.isEmpty() ? "" : ss.peek();
+    }
+}

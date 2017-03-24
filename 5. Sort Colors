@@ -1,0 +1,48 @@
+public class Solution {
+    
+    private void swap(int[] nums, int i, int j){
+        if(i == j)
+            return;
+            
+        nums[i] = nums[i] ^ nums[j];
+        
+        nums[j] = nums[i] ^ nums[j];
+        
+        nums[i] = nums[i] ^ nums[j];
+        
+        return;
+    }
+    
+    public void sortColors(int[] nums) {
+        if(null == nums)
+            return;
+        
+        int len = nums.length;
+        
+        if(0 == len)
+            return;
+            
+        int r = 0;
+        int g = 0;
+        int b = len-1;
+        
+        while(g <= b){
+            
+            int gc = nums[g];
+            
+            if(1 == gc){
+                g++;
+            }else if(0 == gc){
+                swap(nums, g, r);
+                g++;
+                r++;
+            }else if(2 == gc){
+                swap(nums, g, b);
+                b--;
+            }
+            
+        }
+        
+        return;
+    }
+}

@@ -1,0 +1,44 @@
+public class Solution {
+    
+    /*
+        这个题目有最坏n^2的performance
+        可以通过能够support kth orderstatistics的balanced BST来达到nlog(n)
+        Java TreeSet是不支持的.
+        用double value做key, 每次插入时, 取上下两个key的均值, 
+        最后顺序扫描
+        但是double做key效率究竟如何, 很难考究.
+        
+    */
+    public int[][] reconstructQueue(int[][] people) {
+        if(null == people)
+            return null;
+        
+        int len = people.length;
+        if(0 == len)
+            return new int[0][0];
+        
+        Arrays.sort(people, new Comparator<int[]>(){
+            
+            public int compare(int[] l, int[] r){
+                
+                return l[0] == r[0] ? r[1] - l[1] : l[0] - r[0];            
+            }
+            
+        });
+        
+        ArrayList<int[]> l = new ArrayList<>();
+        
+        for(int i = len-1; i >= 0; --i){
+            
+            l.add(people[i][1], people[i]);
+            
+        }
+        
+        //int[][] ret = new int[2][l.size()];
+        
+        int[][] ret = l.toArray(new int[0][0]);
+        
+        return ret;
+        
+    }
+}

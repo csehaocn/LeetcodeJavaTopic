@@ -1,0 +1,53 @@
+public class Solution {
+    
+    // 如此简单的题目确写出如此多的bug
+    // 体力 集中力 也是coding很重要的一部分啊
+    
+    private void DFS(int idx, int count, String s, LinkedList<String> path, List<String> res){
+        
+        if(idx == s.length() && count == 4){
+            StringBuilder b = new StringBuilder();
+            for(String ss : path){
+                b.append(ss + ".");
+            }
+            b.deleteCharAt(b.length()-1);
+            res.add(b.toString());
+            // Error: forgot to return again.... 
+            // 导致下面的判断式无法被执行
+            return;
+            // Error: 忘记count != 4时， idx越界的情况
+        }else if(count == 4 || idx >= s.length()){
+            return;
+        }
+        
+        if(s.charAt(idx) == '0'){
+            path.add("0");
+            DFS(idx+1, count+1, s, path, res);
+            path.removeLast();
+        }else{
+            for(int j = 1; j <=3 && idx+j<= s.length(); ++j){
+                Integer i = Integer.parseInt(s.substring(idx, idx+j));
+                if(null != i && (i >= 0 && i<=255) ){
+                    path.add(s.substring(idx, idx+j));
+                    // Error j... instead of idx + j
+                    // 不习惯index是增量, 
+                    DFS(idx + j, count+1, s, path, res);
+                    path.removeLast();
+                }
+            }
+        }
+        
+        return;
+        
+    }
+    
+    public List<String> restoreIpAddresses(String s) {
+        // simple DFS with verification
+        List<String> res = new ArrayList<>();
+        LinkedList<String> path = new LinkedList<>();
+        
+        DFS(0, 0, s, path, res);
+        
+        return res;
+    }
+}

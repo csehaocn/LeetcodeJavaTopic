@@ -1,0 +1,190 @@
+public class Solution {
+    
+    // DFS在cyclic图中的新错误
+    // 不能使用DP
+    // 因为有环, 所以程序可能会因为遇到自身的path而返回, 
+    // 因此一次invalid不能说明不reachable.
+    
+    // 那么可能可以的修改方法是, 遇到自身path而返回的情况, 也返回true
+    
+    // 添加如下代码
+    // if(visited.contains(st))
+    //                        v = true;
+    
+    // 纯DFS还是TLE
+    // 要么还是只有用
+    // 1. BFS + DFS
+    // 因为BFS不方便获得答案, 或者说中间需要存储很多的答案.
+    // 其实很意外, 虽然以前做过这个题目, 但是BFS+DFS是最好的做法, 还是要看题目的
+    // 当然如果目标点很近而图很大, DFS确实可能跑的很深很远.
+    // 
+    // 1.1 其间还是TLE, 那么需要处理的两个地方
+    // 1. 计算neighbour的时候在BFS中计算过了, 可以重复利用, 因为BFS中每个节点只访问一次, 所以忘记了这个优势
+    // 2. 每个节点的distance用hashmap存储起来, 可以及早返回, 但是这样双边BFS就不太容易用了, 需要把两个distance加起来. 
+    
+    // 就算是这样也没有达到最快, 可能还是因为双向BFS可以提高的原因
+    
+    public static int count = 0;
+    
+    public static final int aLen = 26;
+    
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        
+        // BFS + DFS 
+        Map<String, List<String>> neighbours = new HashMap<>();
+        Map<String, Integer> distance = new HashMap<String, Integer>();
+        
+        int len = ladderLength(beginWord, endWord, wordList, neighbours, distance);
+        
+        List<List<String>> res = new ArrayList<>();
+        if(null == beginWord || null == endWord || null == wordList)
+            return res;
+        
+        Set<String> invalid = new HashSet<>();
+        Set<String> wordSet = new HashSet<>(wordList);
+        if(beginWord.equals(endWord))
+            return res;
+        if(!wordSet.contains(endWord))
+            return res;
+        wordSet.add(endWord);
+        LinkedList<String> path = new LinkedList<>();
+        
+        DFS(beginWord, endWord, path, wordSet, new HashSet<>(), res, len, neighbours, distance);
+        
+        return res;
+        
+    }
+    
+    private void DFS(String s, String endWord, LinkedList<String> path, Set<String> wordSet, Set<String> visited, List<List<String>> res, int len, Map<String, List<String>> neighbours, Map<String, Integer> distance){
+        
+        // Error: s == endWord
+        // 我的天, 这么简单的问题还要在犯错
+        /* Errors:
+        
+        if(s.equals(endWord)){
+            path.add(s);
+            if(!res.isEmpty() && res.get(0).size() > path.size()){
+                // Error: res = new ArrayList<>();
+                // 我的天, 这里只赋了一个局部变量....
+                res.clear();
+            }
+
+            if(res.isEmpty() || res.get(0).size() == path.size()){
+                res.add(new ArrayList<>(path));
+            }
+
+            path.removeLast();
+            // Error: 还是老问题, 其实是大问题, 结束判断之后不return;
+            return true;
+        }
+        
+        */
+        if(s.equals(endWord)){
+            path.add(s);
+            res.add(new ArrayList<>(path));
+            path.removeLast();
+            return;
+        }
+        
+        // Error: 注意这里是len-1, 因为最后一个元素 s 并没有被加进去.
+        // Error: note这里算distance的时候, startword是0, 那么endword的distance实际上为length-1
+        if(path.size() >= len || path.size() > distance.get(s)){
+            return;
+        }
+        
+        path.add(s);
+        visited.add(s);
+
+        if(!neighbours.containsKey(s)){
+                neighbours.put(s, getNeighbours(wordSet, s));
+        }
+        for(String st : neighbours.get(s)){
+            if(!visited.contains(st) && wordSet.contains(st)){
+                DFS(st, endWord, path, wordSet, visited, res, len, neighbours, distance);
+            }
+        }                
+     
+        visited.remove(s);
+        path.removeLast();
+        
+        return;
+    }
+    
+    private List<String> getNeighbours(Set<String> wordSet, String s){
+        
+        List<String> res = new ArrayList<>();
+        
+        char[] ca = s.toCharArray();
+        for(int k = 0; k < s.length(); ++k){
+            char c = s.charAt(k);
+            for(char cj = 'a'; cj < 'z'; ++cj){
+            if(cj != c){
+                ca[k] = (char)(cj);
+                String st = new String(ca);
+                    if(wordSet.contains(st)){
+                        res.add(st);
+                    }
+                }
+            }
+            ca[k] = c;
+        }
+        
+        return res;
+    }
+
+    private boolean expand(Set<String> wordSet, String endWord, Set<String> v, Queue<String> q, Map<String, List<String>> neighbours, Map<String, Integer> distance){
+        // assert !q.isEmpty()
+        int len = q.size();
+        boolean ret = false;
+        for(int i = 0; i < len; ++i){
+            String s = q.poll();
+            int dist = distance.get(s);
+            if(!neighbours.containsKey(s)){
+                neighbours.put(s, getNeighbours(wordSet, s));
+            }
+            
+            for(String st : neighbours.get(s)){
+                if(!v.contains(st)){
+                    q.add(st);
+                    v.add(st);
+                    distance.put(st, dist + 1);
+                    if(st.equals(endWord))
+                        ret = true;
+                }
+            }
+        }
+        
+        return ret;
+    }
+    
+    public int ladderLength(String beginWord, String endWord, List<String> wordList, Map<String, List<String>> neighbours, Map<String, Integer> distance) {
+        // Double End BFS
+        if(null == beginWord || null == endWord || null == wordList)
+            return 0;
+        
+        if(beginWord == endWord)
+            return 0;
+        
+        Queue<String> q = new LinkedList<>();
+        q.offer(beginWord);
+        Set<String> v = new HashSet<>();
+        v.add(beginWord);
+        Set<String> wordSet = new HashSet<>(wordList);
+        if(!wordSet.contains(endWord))
+            return 0;
+        wordSet.add(endWord);
+        distance.put(beginWord, 0);
+        
+
+        while(!q.isEmpty()){
+            
+                boolean hr = expand(wordSet, endWord, v, q, neighbours, distance);
+                if(hr)
+                    return distance.get(endWord);
+        }
+        
+        return 0;
+    }
+    
+}
+

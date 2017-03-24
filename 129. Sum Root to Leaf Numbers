@@ -1,0 +1,163 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+
+// 这次做没有考虑到用一个整数来做path的情况
+// 其实题做太多了, 也会比较容易思维定式
+// 不过没关系
+// code复杂一些, 比较重要的是发现一点新东西
+
+// 如果用list来做path的话, 有时候用一个reversed path或许会在实际操作中更方便, 这样可以形成加法的右对齐
+// 当然最好还是用Integer来做path
+
+
+    public int sumNumbers(TreeNode root) {
+        if(null == root)
+            return 0;
+            
+        List<Integer> res = new ArrayList<>();
+        List<Integer> path = new ArrayList<>();
+        
+        res = DFS(root, res, path);
+        
+        int ret = 0;
+        int base = 1;
+        for(int i = res.size()-1; i >= 0; --i){
+            ret += res.get(i)*base;
+            base *= 10;
+        }
+        
+        return ret;
+    }
+    
+    private List<Integer> DFS(TreeNode root, List<Integer> res, List<Integer> path){
+        // assert null != root
+        path.add(root.val);
+        
+        if(null == root.left && null == root.right){
+            res = addListFromRight(res, path);
+        }else{
+            if(null != root.left)
+                res = DFS(root.left, res, path);
+            if(null != root.right)
+                res = DFS(root.right, res, path);
+        }
+        
+        path.remove(path.size()-1);
+        return res;
+    }
+    
+    private List<Integer> addListFromRight(List<Integer> res, List<Integer> path){
+        // Error: you can not do this here
+        // the path that you assigned to res
+        // will be used as path after it was returned
+        // to return
+        // you will need a copy of res...
+        List<Integer> nres = new ArrayList<>();
+        int max = Math.max(res.size(), path.size());
+        // Error: max - res.size()
+        int i = res.size() - max;
+        int j = path.size() - max;
+        while(i < max && j < max){
+            nres.add( (i>= 0 ? res.get(i) : 0) + (j >= 0 ? path.get(j) : 0) );
+            i++;
+            j++;
+        }
+        return nres;
+    }
+}
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public int sumNumbers(TreeNode root) {
+        // If you really want to use list as path, use linked list to represent reverse path is a better idea
+        
+        if(null == root)
+            return 0;
+        LinkedList<Integer> path = new LinkedList<>();
+        LinkedList<Integer> res = new LinkedList<>();
+        
+        res = DFS(root, path, res);
+        
+        return process(res);
+    }
+    
+    private LinkedList<Integer> DFS(TreeNode root, LinkedList<Integer> path, LinkedList<Integer> res){
+        path.addFirst(root.val);
+        if(null == root.left && null == root.right){
+            LinkedList<Integer> nres = new LinkedList<>();
+            Iterator<Integer> itp = path.iterator();
+            Iterator<Integer> iti = res.iterator();
+            while(itp.hasNext() || iti.hasNext()){
+                nres.addLast( (itp.hasNext()? itp.next() : 0) + (iti.hasNext() ? iti.next() : 0) );
+            }
+            res = nres;
+        }else{
+            if(null != root.left)
+                res = DFS(root.left, path, res);
+            if(null != root.right)
+                res = DFS(root.right, path, res);
+        }
+        path.removeFirst();
+        return res;
+    }
+    
+    private int process(LinkedList<Integer> res){
+        int ret = 0;
+        int base = 1;
+        int carry = 0;
+        for(Integer i : res){
+            carry += i;
+            ret += base*(carry%10);
+            carry /= 10;
+            base *= 10;
+        }
+        ret += base*carry;
+        return ret;
+    }
+}
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    
+    private int sumNumbersAux(TreeNode root, int path){
+        
+        if(null == root)
+            return 0;
+        
+        if(null == root.left && null == root.right){
+            return path*10 + root.val;
+        }else{
+            return sumNumbersAux(root.left, path*10+root.val) + sumNumbersAux(root.right, path*10+root.val);
+        }
+        
+    }
+    
+    public int sumNumbers(TreeNode root) {
+        return sumNumbersAux(root, 0);
+    }
+}

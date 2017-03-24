@@ -1,0 +1,48 @@
+public class Solution {
+    // 这个题很简单, 做法很多
+    // 但是因为不能用order statistics
+    // 所以常见的做法是三个变量.
+    // 还是因为会忘记考虑边界问题，比如重复的数字.
+    
+    public int thirdMax(int[] nums) {
+        if(null == nums)
+            return 0;
+        
+        int len = nums.length;
+        if( 0 ==  len)
+            return 0;
+        if( 1 == len)
+            return nums[0];
+        if( 2 == len)
+            return Math.max(nums[0], nums[1]);
+            
+        Set<Integer> nSet = new HashSet<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        nSet.add(nums[0]);
+        pq.offer(nums[0]);
+        
+        for(int i = 1; i < len; ++i){
+            
+            int n = nums[i];
+            
+            if(!nSet.contains(n)){
+                if(nSet.size() < 3 || pq.peek() < n ){
+                    nSet.add(n);
+                    pq.offer(n);
+                }
+                if(nSet.size() > 3){
+                    nSet.remove(pq.poll());
+                }
+            }
+        }
+        
+        if(pq.size() == 3){
+            return pq.poll();
+        }else{
+            while(pq.size()>1){
+                pq.poll();
+            }
+            return pq.poll();
+        }
+    }
+}

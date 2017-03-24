@@ -1,0 +1,53 @@
+public class Solution {
+    
+    public int divide(int dividend, int divisor) {
+        // e.g.
+        // 11 / 3
+        // 1011 / 0011
+        // 1011 / 0110
+        // 1011 / 1100
+        
+        // 应该以开始就分析cornor case, 
+        // 发现边界条件不好处理, 于是采用long来处理.
+        // 有理由采用long, 用了long实在方便太多了...
+        
+        // 但是最后应为还是要输出, 所以还是得考虑一下Integer.MIN_VALUE
+        // 因为还是会有不对成的问题
+        // 所以说不是用了long一切就解决了
+        // 要么就用判断一下long是不是溢出.
+        
+        if(0 == divisor || dividend == Integer.MIN_VALUE && -1 == divisor)
+            return Integer.MAX_VALUE;
+        
+        long dvd = dividend;
+        long dvs = divisor;
+        int sign = 1;
+        if(dvd < 0){
+            sign *= -1;
+            dvd = -dvd;
+        }
+        if(dvs < 0){
+            sign *= -1;
+            dvs = -dvs;
+        }
+        
+        long res = 0;
+        
+        while(dvd >= dvs){
+            long tmp = dvs;
+            long times = 1;
+            while(dvd >= (tmp << 1)){
+                tmp <<= 1;
+                times <<= 1;
+            }
+            
+            dvd -= tmp;
+            res += times;
+            
+        }
+        
+        return sign*(int)res;
+        
+        
+    }
+}

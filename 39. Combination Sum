@@ -1,0 +1,69 @@
+public class Solution {
+    
+    // 这个DFS也可能有0的问题.
+    
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        
+        Arrays.sort(candidates);
+        
+        LinkedList<Integer> path = new LinkedList<>();
+    
+        List<List<Integer>> res = new ArrayList<>();
+        
+        DFS(candidates, 0, 0, target, path, res);
+     
+        return res;   
+    }
+    
+    public void DFS(int[] candidates, int idx, int sum, int target, LinkedList<Integer> path, List<List<Integer>> res ){
+        
+        // 因为是全positive, 所以开头做判断也没有关系, 没有0的加入
+        
+        if(sum == target){
+            res.add(new ArrayList<>(path));
+            // Error: 因为这里不考虑0的关系, 所以sum == target的时候一定要return
+            return;
+        }
+        if(sum > target || idx >= candidates.length){
+            return;
+        }
+        
+        DFS(candidates, idx+1, sum, target, path, res);
+        path.add(candidates[idx]);
+        sum += candidates[idx];
+        DFS(candidates, idx, sum, target, path, res);
+        path.removeLast();
+        // sum -= candidates[idx];
+        return;
+        
+        /*
+        
+        // 因为这里只有1个0的存在, 所以用探索->验证 以及验证->探索都可以
+        // 不对, 因为每个数可以用多次, 所以, 在有0可以用的时候
+        // 用1,2,3,4次0，会产生不同的答案
+        
+        // sum > target不能作为停止条件, 因为sum可能是负数.
+        // 不对. 题目说了, 可以不是负数
+        // OK, 这个题目不能加0, 加0就有无穷多种答案了..
+        
+        // combination sum 4里面有考虑负数的情况, 无非就是当前数字, 和target, path的共同判断, 看看之后还有没有希望接近target.
+        if(idx >= candidates.length || sum > target)
+            return;
+        
+        DFS(candidates, idx+1, sum, target, path, res);    
+            
+        path.add(candidates[idx]);
+        sum += candidates[idx];
+        if(sum == target){
+            res.add(new ArrayList<>(path));
+        }
+        if(sum < target)
+            DFS(candidates, idx, sum, target, path, res);
+        path.removeLast();
+        //sum -= candidates[idx];
+        
+        return;
+        */
+    }
+    
+}

@@ -1,0 +1,172 @@
+public class AllOne {
+    
+    // 写得简便了一点，这其实还不是完全O（1）的
+    // 完全O(1)需要维护两个Frequency, SegmentHead以及Frequency，SegmentTail的Map
+    // 例如 1 -> 1 - > 2 -> 2 -> 3 -> 3 -> 3
+    //      A    B     C    D    E    F    G
+    // HashMap 记录每个区段的头和尾
+    // 增加一个值时, 例如C, 那么
+    //      1.  我们交换C D的string
+    //      2.  把2的尾+1
+    //      3.  2的尾前移, 3的头前移
+    
+    Map<String, ListNode> m;
+    ListNode head;
+    ListNode tail;
+
+    class ListNode{
+        
+        String s;
+        int v;
+        ListNode prev;
+        ListNode next;
+        
+        ListNode(String s, int value){
+            this.s = s;
+            this.v = value;
+            this.prev = null;
+            this.next = null;
+
+        }
+        
+    }
+    
+    public String toString(){
+        ListNode c = head;
+        StringBuilder builder = new StringBuilder();
+        while(c != null){
+            builder.append(" " + c.v + " -> ");
+            c = c.next;
+        }
+        return builder.toString();
+    }
+
+    /** Initialize your data structure here. */
+    public AllOne() {
+        m = new HashMap<>();
+        this.head = new ListNode("", 0);
+        this.tail = new ListNode("", 0);
+        head.next = tail;
+        tail.prev = head;
+    }
+    
+    private void insertNext(ListNode l, ListNode r){
+        if(null == l.next){
+            // not going to happen, but
+            r = l.next;
+            r.prev = l;
+        }else{
+            r.next = l.next;
+            r.prev = l;
+            r.next.prev = r;
+            r.prev.next = r;
+        }
+        return;
+    }
+    
+    private void insertPrev(ListNode l, ListNode i){
+        if(null == l.prev){
+            l.prev = i;
+            i.next = l;
+        }else{
+            i.prev = l.prev;
+            i.next = l;
+            i.prev.next = i;
+            i.next.prev = i;
+        }
+        return;
+    }
+    
+    private void remove(ListNode l){
+        if(null == l.prev && null == l.next){
+            return;
+        }else if(null == l.prev){
+            l.next.prev = null;
+        }else if(null == l.next){
+            l.prev.next = null;
+        }else{
+            l.prev.next = l.next;
+            l.next.prev = l.prev;
+        }
+        return;
+    }
+    
+    /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
+    public void inc(String key) {
+        if(!m.containsKey(key)){
+            ListNode l = new ListNode(key, 1);
+            m.put(key, l);
+            insertNext(head, l);
+        }else{
+            m.get(key).v++;
+            ListNode l = m.get(key);
+            ListNode it = l.next;
+            while(it != tail && it.v < l.v){
+                it = it.next;
+            }
+            
+            if(it != l.next){
+                remove(l);
+                insertPrev(it, l);
+            }
+        }
+        
+        //System.out.println(this);
+        return;
+    }
+    
+    /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
+    public void dec(String key) {
+        if(!m.containsKey(key)){
+            return;
+        }else{
+            m.get(key).v--;
+            if(0 == m.get(key).v){
+                remove(m.get(key));
+                m.remove(key);
+            }else{
+                ListNode l = m.get(key);
+                ListNode it = l.prev;
+                while(it != head && it.v > l.v){
+                    it = it.prev;
+                }
+            
+                if(it != l.prev){
+                    remove(l);
+                    insertNext(it, l);
+                }
+            }
+        }
+        //System.out.println(this);
+
+    }
+    
+    /** Returns one of the keys with maximal value. */
+    public String getMaxKey() {
+        if(head.next == tail){
+            return "";
+        }else{
+            return tail.prev.s;
+        }
+    }
+    
+    /** Returns one of the keys with Minimal value. */
+    public String getMinKey() {
+        
+        if(head.next == tail){
+            return "";
+        }else{
+            return head.next.s;
+        }
+        
+    }
+}
+
+/**
+ * Your AllOne object will be instantiated and called as such:
+ * AllOne obj = new AllOne();
+ * obj.inc(key);
+ * obj.dec(key);
+ * String param_3 = obj.getMaxKey();
+ * String param_4 = obj.getMinKey();
+ */

@@ -1,0 +1,74 @@
+public class Solution {
+// 据说,  遇到循环数组的问题的时候, 用两倍循环是最常用的方法
+// 当然虽然都是O(n), 还是要多一些开销的. 
+// 也有人做了一个2倍array的copy, 这种做法对复杂的问题还是不错的 
+
+// 其他的API Arrays.fill(res, -1);
+// 以及fill 2d Array
+// double[][] matrix = new double[20][4];
+
+// Fill each row with 1.0
+// for (double[] row: matrix)
+//    Arrays.fill(row, 1.0);
+
+// 另外一种有趣的寻找mask的方法
+// 也是log32的寻找最高bit的方法
+// 例如 num = 1010101
+// mask = 1010101
+// mask |= mask >> 1;
+// 0001010101
+// 0000101010
+// 00011xxxxx
+
+// mask |= mask >> 2;
+// 00011xxxxx
+// 0000011xxxxx
+// 0001111xxx
+
+// 对于32位, 做5次, 一直到16就可以了. 
+/*
+int findComplement(int num) {
+    int mask = num;
+    mask |= mask >> 1;
+    mask |= mask >> 2;
+    mask |= mask >> 4;
+    mask |= mask >> 8;
+    mask |= mask >> 16;
+    return num ^ mask;
+}
+
+*/
+
+/* 用log也是一个, 可能是, 一个好的取得最高位的方法, log2 应该不存在很大的精度问题, 或许也是bite操作实现的
+   public:
+    int findComplement(int num) {
+        return ~num & ((1 <<(int)log2(num))-1);
+    }
+  };
+*/
+    
+    
+    public int[] nextGreaterElements(int[] nums) {
+        if(null == nums)
+            return null;
+        int len = nums.length;
+        if(0 == len)
+            return new int[0];
+            
+        Stack<Integer> st = new Stack<Integer>();
+        int[] res = new int[len];
+        for(int i = 0; i < len; ++i)
+            res[i] = -1;
+        
+        for(int i = 0; i < len*2; ++i){
+            int n = nums[i%len];
+            while(!st.isEmpty() && nums[st.peek()] < n ){
+                res[st.pop()] = n;
+            }
+            if(i < len)
+                st.add(i);
+        }
+        
+        return res;
+    }
+}

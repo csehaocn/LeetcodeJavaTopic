@@ -1,0 +1,50 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    // 2种常见的迭代法
+    // 头插, 生长
+    // 其实recursive 更tricky
+    // 本以为需要返回尾部节点, 但是尾部节点不就是返回前的头节点么, 所以只用返回ans就可以了
+    public ListNode reverseListA(ListNode head) {
+        ListNode ph = new ListNode(0);
+        ListNode c = head;
+        while(null != c){
+            ListNode cn = c.next;
+            c.next = ph.next;
+            ph.next = c;
+            c = cn;
+        }
+        return ph.next;
+    }
+    public ListNode reverseListB(ListNode head) {
+        
+        ListNode nh = null;
+        while(null != head){
+            ListNode next = head.next;
+            head.next = nh;
+            nh = head;
+            head = next;
+        }
+        
+        return nh;
+        
+    }
+    
+    
+    public ListNode reverseList(ListNode head){
+        
+        if(null == head || null == head.next)
+            return head;
+        
+        ListNode node = reverseList(head.next);
+        head.next.next = head;
+        head.next = null;
+        return node;
+    }
+}

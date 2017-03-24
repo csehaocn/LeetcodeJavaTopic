@@ -1,0 +1,46 @@
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    public List<Interval> merge(List<Interval> intervals) {
+        
+        if(null == intervals)
+            return null;
+        int len = intervals.size();
+        if(0 == len)
+            return intervals;
+        
+        Collections.sort(intervals, new Comparator<Interval>(){
+            
+            public int compare(Interval l, Interval r){
+                return l.start == r.start ? l.end - r.end : l.start - r.start;
+            }
+            
+        });
+        
+        List<Interval> res = new ArrayList<>();
+        int l = intervals.get(0).start;
+        int r = intervals.get(0).end;
+        
+        for(int i = 1; i < len; ++i){
+            if(intervals.get(i).start <= r){
+                r = Math.max(r, intervals.get(i).end);
+            }else{
+                res.add(new Interval(l, r));
+                // 总是有些这样的错误,  比如不更新变量.
+                l = intervals.get(i).start;
+                r = intervals.get(i).end;
+            }
+        }
+        
+        res.add(new Interval(l, r));
+        
+        return res;
+    }
+}

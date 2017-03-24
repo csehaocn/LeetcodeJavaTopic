@@ -1,0 +1,55 @@
+/**
+ * Definition for an interval.
+ * public class Interval {
+ *     int start;
+ *     int end;
+ *     Interval() { start = 0; end = 0; }
+ *     Interval(int s, int e) { start = s; end = e; }
+ * }
+ */
+public class Solution {
+    
+    // 这个题目弄了个util array, 存interval的index, 因为index->value是可以的, value->index就不行了
+    // 但是好绕
+    public int[] findRightInterval(Interval[] intervals) {
+        
+        if(null == intervals)
+            return null;
+            
+        int len = intervals.length;
+        if(0 == len)
+            return new int[0];
+        
+        Integer[] util = new Integer[len];
+        for(int i = 0; i < len; ++i){
+            util[i] = i;
+        }
+        
+        Arrays.sort(util, new Comparator<Integer>(){
+            public int compare(Integer l, Integer r){
+                return intervals[l].start - intervals[r].start;
+            }
+        });
+        
+        int[] res = new int[len];
+        
+        for(int i = 0; i < len; ++i){
+            res[i] = binarySearch(util, intervals, intervals[i].end);
+        }
+        return res;
+    }
+    
+    private int binarySearch(Integer[] util, Interval[] intervals, int target){
+        int l = 0;
+        int r = intervals.length;
+        while(l < r){
+            int m = l + (r - l)/2;
+            if(intervals[util[m]].start >= target){
+                r = m;
+            }else{
+                l = m + 1;
+            }
+        }
+        return l == intervals.length ? -1 : util[l];
+    }
+}

@@ -1,0 +1,30 @@
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+// 这个题的边界条件还是挺奇葩的
+// 以前没有遇到过
+// 以前的例子都是判断前进
+// 但这里, 因为要访问前一个节点, 是不是前进还要再做判断
+// 如果不认真想想test case, 是无法知道自己错了的. 
+
+// 但是自己完全做错了
+// 这个题目是不需要进行到尾部的
+// 只需要移动和删除一个就可以了..
+    public void deleteNode(ListNode node) {
+        ListNode n = node;
+        while(true){
+            n.val = n.next.val;
+            if(null == n.next.next)
+                break;
+            n = n.next;
+        }
+        n.next = null;
+        return;
+    }
+}

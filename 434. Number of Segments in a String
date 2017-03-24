@@ -1,0 +1,36 @@
+public class Solution {
+    public int countSegments(String s) {
+        if(null == s)
+            return 0;
+            
+        int len = s.length();
+        int i = 0;
+        while(i < len && s.charAt(i) == ' ' ){
+            i++;
+        }
+        int res = 0;
+        
+        // 这里有两个选择
+        // 头计数和尾计数
+        // 两个选择都可以说出来, 说下优劣, 比如对边界条件的适应性
+        // 然后做一个
+        // 在这里, 尾部计数的麻烦是, 尾部可能是len可能是 " ", 
+        // 而头部总是统一的, 一个非空白
+        while(i < len){
+            
+            res++;
+            
+            while(i < len && s.charAt(i) != ' '){
+                i++;
+            }
+            
+            while(i < len && s.charAt(i) == ' '){
+                i++;
+            }
+        }
+        return res;
+        // test
+        // "  "
+        // "  A  "
+    }
+}

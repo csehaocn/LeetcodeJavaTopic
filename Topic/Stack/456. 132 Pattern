@@ -1,0 +1,51 @@
+public class Solution {
+    
+    // 这个题目太tricky了， 自己凭空做, 无论如何也想不到用stack的, 顶多能想起来用treemap
+    // 递减stack的性质太多了...
+    class Pair{
+        
+        public int first;
+        public int second;
+        
+        public Pair(int first, int second){
+            this.first = first;
+            this.second = second;
+        }
+        
+    }
+    
+    public boolean find132pattern(int[] nums) {
+        if(null == nums)
+            return false;
+        int len = nums.length;
+        
+        if(len < 3){
+            return false;
+        }
+        
+        Stack<Pair> st = new Stack<>();
+        
+        for(int i = 0; i < len; ++i){
+            int n = nums[i];
+            if(st.isEmpty()){
+                st.push(new Pair(n, n));
+            }else{
+                if( n > st.peek().first ){
+                    int low = st.peek().first;
+                    while(!st.isEmpty() && n > st.peek().first){
+                        if(n < st.peek().second)
+                            return true;
+                        else
+                            st.pop();
+                    }
+                    st.push(new Pair(low, n));
+                }else{
+                    // Error: forgot to write this condition.
+                    st.push(new Pair(n, n));
+                }
+            }
+        }
+        
+        return false;
+    }
+}

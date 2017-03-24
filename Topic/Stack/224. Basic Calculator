@@ -1,0 +1,105 @@
+public class Solution {
+    
+    // 注意： Error:
+    // + - 算式中, 从左到右和从右到左evaluate的结果是不一样的. 
+    
+    // 没看清题目, 写了个带* /的, 带* / 的做法因为优先级的关系, 做法完全不同
+    // 需要存储等待下一个operater才能确定优先级
+    
+    // 而且在下面的做法中, 因为需要保证operater stack和value stack同步, 所以设置一个当前数值变量是必要的.
+    // 保证双stack同步, 逻辑上更严谨, 查bug更方便. 
+    
+    public int calculate(String s) {
+        if(null == s)
+            return 0;
+        int len = s.length();
+        if(0 == len)
+            return 0;
+        
+        Stack<Integer> st = new Stack<>();
+        Stack<Character> opst = new Stack<>();
+        // 1 2 3 4 5 6
+        // + - * / ( )
+        
+        int i = 0;
+        Integer n = null;
+        // last eval digit;
+        char[] ca = s.toCharArray();
+        
+        while(i < len){
+            char c = ca[i];
+            if('(' == c){
+                if(null != n)
+                    return 0;
+                st.push(0);
+                opst.push(c);
+                i++;
+            }else if(')' == c){
+                if(null == n)
+                    return 0;
+                while(!opst.isEmpty() && opst.peek() != '('){
+                    n = eval(n, st.pop(), opst.pop());
+                }
+                if(opst.isEmpty()){
+                    return 0;
+                }
+                opst.pop();
+                st.pop();
+                i++;
+            }else if('+' == c || '-' == c || '*' == c || '/' == c){
+                if(null == n)
+                    return 0;
+                // Error: 这里还是翻了重大错误, 以为可以把+和-都stack起来, 最后再计算
+                // 但是带减法的算式, 从左到右和从右到左evaluate是不一样的.
+                if('+' == c || '-' == c){
+                    while(!opst.isEmpty() && (opst.peek() == '+' || opst.peek() == '-') ){
+                        n = eval(n, st.pop(), opst.pop());
+                    }
+                }
+                st.push(n);
+                opst.push(c);
+                n = null;
+                i++;
+            }else if(Character.isDigit(c)){
+                if(null != n)
+                    return 0;
+                n = 0;
+                // Error: 致命的错误啊, 平时都能想起来, 有时候为什么就想不起来呢
+                // 牢记, while的第一个判断永远是越界判断.
+                while(i < len && Character.isDigit(ca[i])){
+                    n = n*10 + (ca[i] - '0');
+                    i++;
+                }
+                while(!opst.isEmpty() && (opst.peek() == '*' || opst.peek() == '/') ){
+                    n = eval(n, st.pop(), opst.pop());
+                }
+            }else{
+                // exceptions
+                i++;
+            }
+            
+        }
+        
+        while(!opst.isEmpty()){
+            n = eval(n, st.pop(), opst.pop());
+        }
+        
+        return n;
+    }
+    
+    private int eval(Integer n, int l, char op){
+        if(null == n)
+            return 0;
+        if('+' == op){
+            return l + n;
+        }else if('-' == op){
+            return l - n;
+        }else if('*' == op){
+            return l * n;
+        }else if('/' == op){
+            return l / n;
+        }else{
+            return 0;
+        }
+    }
+}

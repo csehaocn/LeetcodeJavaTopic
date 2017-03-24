@@ -1,0 +1,90 @@
+public class Solution {
+
+            // Error: 因为再绕过一圈reach最高点以后, 我们还必须再执行一次
+            // 这久导致了如果只用循环idx非常难判断, 
+            // 我们并不能知道当前是刚刚处理了最高点, 还是绕了一圈又回到了最高点.
+            
+            // 看来循环绕圈的题目, 并没有想象中那么简单, 最好的办法其实还是, 使用2杯长度循环
+            // 又试验下了2倍数组
+            // 其实还是不靠谱....
+            // 看来不能直接用 idx = i % len
+            // 是否超过len的信息至关重要
+            
+        // Error: 用2倍stack的时候这里又错了, 因为遍历到了end, 所以末尾的数据被保留下来了.....
+        // 看来遍历到了是第一遍还是第二遍的信息 至关重要
+        // 有时候不能直接用mod直接就预处理了. 
+    public int[] nextGreaterElements(int[] nums) {
+        if(null == nums)
+            return null;
+        int len = nums.length;
+        if(0 == len)
+            return new int[0];
+            
+        int idx = 0;
+        int stackBottomIdx = -1;
+        // idx stack
+        Stack<Integer> st = new Stack<>();
+        int[] res = new int[len];
+        while(true){
+
+            int i = idx % len;
+            
+            int k = nums[i];
+            while(!st.isEmpty() && nums[st.peek()] < k ){
+                int pi = st.pop();
+                res[pi] = k;
+            }
+            if(st.isEmpty())
+                stackBottomIdx = i;
+            st.push(i);
+            
+            // Error: 因为再绕过一圈reach最高点以后, 我们还必须再执行一次
+            // 这久导致了如果只用循环idx非常难判断, 
+            // 我们并不能知道当前是刚刚处理了最高点, 还是绕了一圈又回到了最高点.
+            
+            // 看来循环绕圈的题目, 并没有想象中那么简单, 最好的办法其实还是, 使用2杯长度循环
+            if(i == stackBottomIdx && idx >= len)
+                break;
+            idx++;
+
+        }
+        
+        while(!st.isEmpty()){
+            res[st.pop()] = -1;
+        }
+        
+        return res;
+    }
+}
+
+public class Solution {
+    public int[] nextGreaterElements(int[] nums) {
+        if(null == nums)
+            return null;
+        int len = nums.length;
+        if(0 == len)
+            return new int[0];
+            
+        Stack<Integer> st = new Stack<>();
+        int[] res = new int[len];
+        for(int i = 0; i < len * 2; ++i){
+            int idx = i % len;
+            int k = nums[idx];
+            while(!st.isEmpty() && nums[st.peek() % len] < k ){
+                res[st.pop() % len] = k;
+            }
+            st.push(i);
+        }
+        
+        // Error: 用2倍stack的时候这里又错了, 因为遍历到了end, 所以末尾的数据被保留下来了.....
+        // 看来遍历到了是第一遍还是第二遍的信息 至关重要
+        // 有时候不能直接用mod直接就预处理了. 
+        while(!st.isEmpty()){
+            int i = st.pop();
+            if(i < len)
+                res[i] = -1;
+        }
+        
+        return res;
+    }
+}

@@ -1,0 +1,37 @@
+public class Solution {
+    // 这个题目用DFS也可以做, 同样都是recursive solution
+    private List<List<Integer>> getFactorsUtil(int n, int mf){
+        // target n, min factor
+        List<List<Integer>> res = new ArrayList<>();
+        
+        for(int i = mf; i <= (int)Math.sqrt(n); ++i){
+            if(0 == n % i){
+                List<List<Integer>> ret = getFactorsUtil(n/i, i);
+                ArrayList<Integer> t = new ArrayList<>();
+                t.add(n/i);
+                ret.add(t);
+                // ret.add(Arrays.asList(n/i));
+                // Line 12: java.lang.UnsupportedOperationException
+                // can not add element with asList....
+                for(List<Integer> l : ret){
+                    l.add(i);
+                    res.add(l);
+                }
+            }
+        }
+        
+        return res;
+    }
+    
+    public List<List<Integer>> getFactors(int n) {
+        
+        List<List<Integer>> res = new ArrayList<>();
+        
+        if(n < 3)
+            return res;
+        
+        res = getFactorsUtil(n, 2);
+        
+        return res;
+    }
+}

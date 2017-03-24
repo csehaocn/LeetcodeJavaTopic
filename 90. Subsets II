@@ -1,0 +1,53 @@
+public class Solution {
+    
+    // 两种DFS都可行的情况
+    // 不知道需要在没添加一个元素时，就添加答案的DFS有什么特征呢.
+    // 
+    private void DFS(int[] nums, int idx, LinkedList<Integer> path, List<List<Integer>> res){
+        
+        if(idx >= nums.length)
+            return;
+        
+        int i = idx + 1; 
+        while(i < nums.length && nums[i-1] == nums[i])
+            i++;
+        DFS(nums, i, path, res);
+        
+        path.add(nums[idx]);
+        res.add(new ArrayList<>(path));
+        DFS(nums, idx + 1, path, res);
+        path.removeLast();
+        
+        return;
+    }
+    
+    private void DFSA(int[] nums, int idx, LinkedList<Integer> path, List<List<Integer>> res){
+        
+        if(idx >= nums.length){
+            res.add(new ArrayList<>(path));
+            return;
+        }
+        
+        int i = idx + 1; 
+        while(i < nums.length && nums[i-1] == nums[i])
+            i++;
+        DFS(nums, i, path, res);
+        
+        path.add(nums[idx]);
+        DFS(nums, idx + 1, path, res);
+        path.removeLast();
+        
+        return;
+    }
+    
+    public List<List<Integer>> subsetsWithDup(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        LinkedList<Integer> path = new LinkedList<>();
+        
+        res.add(new ArrayList<>());
+        DFS(nums, 0, path, res);
+        
+        return res;
+    }
+}

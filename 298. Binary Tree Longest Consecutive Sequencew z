@@ -1,0 +1,64 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    
+    private int longestConsecutiveAux(TreeNode root, List<Integer> res){
+        
+        if(null == root)
+            return 0;
+        
+        int ret = 1;
+        
+        /* Recursive条件完全错了, 左边不满足条件就完全没有被调用 
+        if(null != root.left){
+            if(root.val != Integer.MAX_VALUE && root.left.val == root.val + 1){
+                ret = longestConsecutiveAux(root.left, res) + 1;
+            }
+        }
+        
+        if(null != root.right){
+            if(root.val != Integer.MAX_VALUE && root.right.val == root.val + 1){
+                ret = Math.max(ret, longestConsecutiveAux(root.right, res) + 1);
+            }
+        }
+        */
+        
+        if(null != root.left){
+            int l = longestConsecutiveAux(root.left, res);
+            if(root.val != Integer.MAX_VALUE && root.left.val == root.val + 1){
+                ret = l + 1;
+            }
+        }
+        
+        if(null != root.right){
+            int r = longestConsecutiveAux(root.right, res);
+            if(root.val != Integer.MAX_VALUE && root.right.val == root.val + 1){
+                ret = Math.max(ret, r + 1);
+            }
+        }
+        
+        res.set(0, Math.max(res.get(0), ret));
+        
+        return ret;
+        
+    }
+    
+    public int longestConsecutive(TreeNode root) {
+        
+        List<Integer> res = new ArrayList<>();
+        
+        res.add(0);
+        
+        longestConsecutiveAux(root, res);
+        
+        return res.get(0);
+        
+    }
+}

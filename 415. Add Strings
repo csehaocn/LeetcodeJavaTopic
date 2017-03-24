@@ -1,0 +1,27 @@
+public class Solution {
+    public String addStrings(String num1, String num2) {
+        if(null == num1 || null == num2)
+            return null;
+            
+        num1 = new StringBuffer(num1).reverse().toString();
+        num2 = new StringBuffer(num2).reverse().toString();
+        StringBuilder b = new StringBuilder();
+        
+        int i = 0;
+        int carry = 0;
+        while( i < num1.length() || i < num2.length()){
+            carry += i < num1.length() ? num1.charAt(i) - '0' : 0;
+            carry += i < num2.length() ? num2.charAt(i) - '0' : 0;
+            b.append(carry % 10);
+            carry /= 10;
+            // 总是忘记i++....
+            i++;
+        }
+        
+        if(carry > 0){
+            b.append(carry);
+        }
+        
+        return b.reverse().toString();
+    }
+}

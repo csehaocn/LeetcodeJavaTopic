@@ -1,0 +1,22 @@
+public class Solution {
+    public boolean canJump(int[] nums) {
+        if(null == nums)
+            return false;
+            
+        int len = nums.length;
+        if(0 == len)
+            return false;
+        if(1 == len)
+            return true;
+        
+        int l = 0; 
+        int r = 1;
+        while(l < r){
+            r = Math.max(r, l + nums[l] + 1);
+            if(r >= len)
+                return true;
+            l++;
+        }
+        return false;
+    }
+}

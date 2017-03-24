@@ -1,0 +1,133 @@
+public class Solution {
+
+
+  // 这个题目陷入了双扫的误区, 导致相等高度的板很难处理. 
+  // 暂时没想到双扫中相等高度的板 去重的方法, 只用了一个hashmap打了补丁.
+  // 又写了一个单扫的版本, 其实也是不容易作对, 还是出了bug
+  
+    public int trap(int[] height) {
+        // 借这个题 深入理解一下, stack和左右第一个高低数的问题
+        // Stack可以帮你找到, 从左到右index (从右到左反之)
+        // 左边第一个大于/小于你的数, 注意这里有一个区别, 
+        // 1.   可以找到, 左边第一个大于你的数, 是指index
+        // 2.   可以找到, 左边第一个小于你的数, 是指数值, 且在左边的坑里(当前与左边高于自己的第一个数, 或者左边界0, 之间)的, 
+/*
+    
+   |      
+  ||  ||  
+| ||| ||| 
+||||||||||
+||||||||||
+0123456790
+
+*/
+        // 例如， idx 6, 可以找到3和4, 3是第一个高于他的, 4是在坑里第一个小于他的.
+        // 这是decreasing stack可以找出的两个性质
+        // 奇妙的是, 这个题用这个两个性质都可以解, 那么可以说明这两个性质本质上是对偶的或者等价的. 
+        
+        // 首先 扫两遍的方法
+        
+        // 1. 找当前最高的, 向左扫描次高的
+        
+        // 这个题又一次陷入了扫两遍的陷阱
+        // 本来以为扫两遍是好的, 但是因为可能有左右等高的板的情况出现
+        // 这导致2次扫描非常的难以判断, 如何区别等高板, 以及等高版是否被加过了两次
+        // 在思考的时候, 确实区分出左边高和右边高, 是非常利于思考的, 但是事实上, 实际操作
+        // 确出现了致命的麻烦. 
+        
+        int res = 0;
+        if(null == height || height.length == 0)
+            return 0;
+        int len = height.length;
+        Stack<Integer> st = new Stack<>();
+        Stack<Integer> bst = new Stack<>();
+        Set<String> equal = new HashSet<>();
+        
+        for(int i = 0; i < len; ++i){
+            Integer left = null;
+            int rightH = height[i];
+            int t = 0;
+            // Note: count equal on this side
+            while(!st.isEmpty() && rightH >= height[st.peek()]){
+                left = st.pop();
+                t += bst.pop();
+            }
+            if(st.isEmpty() && null != left){
+                if(height[left] == rightH){
+                    equal.add("" + left + " " + i);
+                }
+                res += (i - left)*height[left] - t;
+                st.push(i);
+                bst.push(rightH);
+            }else{
+                st.push(i);
+                bst.push(t+rightH);
+            }
+        }
+        
+        // Error: 忘记了新stack
+        // 结果居然是0.
+        st = new Stack<>();
+        bst = new Stack<>();
+        for(int i = len-1; i >= 0; --i){
+            Integer right = null;
+            int leftH = height[i];
+            int t = 0;
+            // Note: count equal on this side
+            while(!st.isEmpty() && leftH >= height[st.peek()]){
+                right = st.pop();
+                t += bst.pop();
+            }
+            // t = 3 right = 10 i = 8 leftH = 2 st.size() = 0
+            // i = 8 res = 0
+            if(st.isEmpty() && null != right){
+                if(leftH == height[i]){
+                    String key = "" + i + " " + right;
+                    if(equal.contains(key))
+                        res -= (right - i)*height[right] - t;
+                }
+                res += (right - i)*height[right] - t;
+                st.push(i);
+                bst.push(leftH);
+            }else{
+                st.push(i);
+                bst.push(t+leftH);
+            }
+        }
+        return res;
+    }
+}
+
+public class Solution {
+    public int trap(int[] height) {
+        if(null == height)
+            return 0;
+        int len = height.length;
+        if(0 == len)
+            return 0;
+        
+        Stack<Integer> st = new Stack<>();
+        // decreasing stack
+        
+        int res = 0;
+        int i = 0; 
+        while(i < len){
+            int h = height[i];
+            int lastH = 0;
+            while(!st.isEmpty() && height[st.peek()] <= h){
+                int nidx = st.pop();
+                int nh = height[nidx];
+                res += (i - nidx - 1) * (nh - lastH);
+                lastH = nh;
+            }
+            // Error: forgot the case when right smaller than left
+            if(!st.isEmpty()){
+                res += (i - st.peek() - 1)*(h - lastH);
+            }
+            st.push(i);
+            i++;
+        }
+        
+        return res;
+    }
+}

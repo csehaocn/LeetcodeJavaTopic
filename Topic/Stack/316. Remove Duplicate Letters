@@ -1,0 +1,108 @@
+public class Solution {
+
+    // 我自己的做法, 因为看到hard, 并没有想到用stack
+    // 但是这种左右比大小的题目, 感觉用stack是没有错的. 
+    
+    public String removeDuplicateLetters(String s) {
+        if(null == s)
+            return "";
+            
+        int len = s.length();
+        if(0 == len)
+            return "";
+        StringBuilder res = new StringBuilder();
+            
+        ArrayList<LinkedList<Integer>> lOrder = new ArrayList<>();
+        for(int i = 0; i < 26; ++i){
+            lOrder.add(new LinkedList<>());
+        }
+        
+        char[] ca = s.toCharArray();
+        Set<Character> sc = new HashSet<>();
+        for(int i = 0; i < len; ++i){
+            lOrder.get(ca[i]-'a').add(i);
+            sc.add(ca[i]);
+        }
+        
+        int last = -1;
+        
+        while(sc.size() > 0){
+            
+            for(int i = 0; i < 26; ++i){
+                
+                char c = (char)('a'+i);
+                
+                if(sc.contains(c)){
+                    int tail = lOrder.get(i).getLast();
+                    if(tail > last){
+                        int nLast = 0;
+                        for(int k : lOrder.get(i)){
+                            if(k > last){
+                                nLast = k;
+                                break;
+                            }
+                        }
+                        boolean canPut = true;
+                        for(char cc : sc){
+                            if(cc != c){
+                                int ot = lOrder.get((char)(cc -'a')).getLast();
+                                if(ot < nLast){
+                                    canPut = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if(canPut){
+                            res.append(c);
+                            sc.remove(c);
+                            last = nLast;
+                            // Error: you need to break here.... 
+                            // start a new 26 run.
+                            break;
+                        }
+                    }
+                }    
+            }
+            
+        }
+        
+        return res.toString();
+    }
+}
+
+public class Solution {
+    public String removeDuplicateLetters(String s) {
+        if(null == s)
+            return null;
+        
+        int len = s.length();
+        if(0 == len)
+            return "";
+        
+        char[] ca = s.toCharArray();
+        int[] cArr = new int[26];
+        for(char c : ca){
+            cArr[c-'a']++;
+        }
+        
+        Stack<Character> st = new Stack<>();
+        boolean[] visited = new boolean[26];
+        for(char c : ca){
+            int idx = c - 'a';
+            cArr[idx]--;
+            if(!visited[idx]){
+                while(!st.isEmpty() && st.peek() > c && cArr[st.peek()-'a'] > 0){
+                    int pidx = st.pop() - 'a';
+                    visited[pidx] = false;
+                }
+                st.push(c);
+                visited[idx] = true;
+            }
+        }
+        StringBuilder b = new StringBuilder();
+        while(!st.isEmpty()){
+            b.append(st.pop());
+        }
+        return b.reverse().toString();
+    }
+}

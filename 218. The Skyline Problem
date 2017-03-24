@@ -1,0 +1,141 @@
+public class Solution {
+    
+    // 循环不变式的重要性
+    // 所以说, 好的循环不变式的总结, 
+    // 是写出好code的关键中的关键.
+    
+    // 想用building来封装, 
+    // 但是这样写的好辛苦
+    // 左边和右边要区分判断
+    
+    // 最终拜倒在这个例子上
+    // [[1,2,1],[1,2,2],[1,2,3]]
+    // 因为一开始没有分析清楚
+    // 重叠开始是要最大值
+    // 重叠结束时要最小值
+    
+    // 那么在同一个点, 有开始有结束的时候
+    
+    // 必须按照开始结束, 或者结束开始的顺序才行.
+    // 那么稍微排一下序
+    // 让两个list中先处理end完, 再处理start
+    
+    // 这里虽然pass了, 但是一直到最后, 都说不清楚怎么add和remove相同高度的元素的原理
+    // 
+    // 相比之下, 如果能够把同一个点上的升降都集中处理, 得到一个新的高度以后, 在判断和之前的高度有没有变化,
+    // 这样的不变式是完全正确的. 
+    
+    class Building{
+        
+        int left;
+        int right;
+        int height;
+        
+        Building(int l, int r, int h){
+            left = l;
+            right = r;
+            height = h;
+        }
+        
+    }
+    
+    public List<int[]> getSkyline(int[][] buildings) {
+        
+        LinkedList<int[]> res = new LinkedList<>();
+        
+        LinkedList<Building> sList = new LinkedList<>();
+        LinkedList<Building> eList = new LinkedList<>();
+        for(int[] b : buildings){
+            Building bd = new Building(b[0], b[1], b[2]);
+            sList.add(bd);
+            eList.add(bd);
+        }
+        
+        Collections.sort(sList, new Comparator<Building>(){
+        
+            public int compare(Building l, Building r){
+                return l.left == r.left ? l.height - r.height : l.left - r.left;
+            }
+            
+        });
+        
+        Collections.sort(eList, new Comparator<Building>(){
+        
+            public int compare(Building l, Building r){
+                return l.right == r.right ? l.height - r.height : l.right - r.right;
+            }
+            
+        });
+        
+        TreeSet<Building> ts = new TreeSet<>(new Comparator<Building>(){
+            
+            public int compare(Building l, Building r){
+                return l.height - r.height;
+            }
+            
+        });
+        
+        while(!sList.isEmpty() || !eList.isEmpty()){
+            
+            Building next = null;
+            boolean start = false;
+            if(sList.isEmpty()){
+                next = eList.removeFirst();
+                start = false;
+            }else if(eList.isEmpty()){
+                next = sList.removeFirst();
+                start = true;
+            }else{
+                if(sList.getFirst().left >= eList.getFirst().right){
+                    next = eList.removeFirst();
+                    start = false;
+                }else{
+                    next = sList.removeFirst();
+                    start = true;
+                }
+            }
+            
+            if(start){
+                ts.add(next);
+            }else{
+                ts.remove(next);
+            }
+            
+            
+            // the heightest current
+            int idx = start ? next.left : next.right;
+            int height = 0;
+            
+            if(!ts.isEmpty()){
+                Building b = ts.last();
+                height = b.height;
+            }else{
+                height = 0;
+            }
+            
+            if(res.size() > 0){
+                int[] p = res.getLast();
+                
+                if(idx == p[0]){
+                    height = start ? Math.max(height, res.getLast()[1]) : Math.min(height, res.getLast()[1]) ;
+                    res.removeLast();
+                }
+            }
+            
+            res.add(new int[]{idx, height});
+            if(res.size() >= 3 && res.get(res.size()-2)[1] == res.get(res.size()-3)[1]){
+                res.remove(res.size()-2);
+            }
+            
+        }
+        
+        if(res.size() >= 2 && res.get(res.size()-1)[1] == res.get(res.size()-2)[1]){
+            // 前面的remove都是remove 后一个
+            // 这里的remove是remove前一个.
+                res.remove(res.size()-2);
+        }
+        
+        return res;
+        
+    }
+}

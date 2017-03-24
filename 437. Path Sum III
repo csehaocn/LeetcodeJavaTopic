@@ -1,0 +1,63 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    
+    // 这个题目做的时候出错, 只记住了DFS的定式
+    // 但是实际上边界条件, 或者是初始条件是出错的
+    // 我感觉都是DFS, 但是不一定有完全的定式, 
+    // 处理 -> 探索, 探索 -> 处理 暂且认为在不同的问题里都是有应用的. 
+    // 这里出错是DFS到leaf node的时候, 没有加紧path, 也没有加进sum
+    // 这种DFS是需要深入到leaf的null节点的
+    // 但是因为null节点有2个, 所以其实并不是完全适合所有情况的
+    // 所以 自增 -> 处理 -> 探索 其实可能是一个最好的paradigm
+    
+    private int DFS(TreeNode c, List<Integer> path, int sum, int target){
+        
+        int res = 0;
+        
+        path.add(c.val);
+        sum += c.val;
+        int tmp = sum;
+        
+        for(int i = 0; i < path.size(); ++i){
+            if(tmp == target){
+                res++;
+            }
+            tmp -= path.get(i);
+        }
+        
+        
+        
+        if(null != c.left){
+            res += DFS(c.left, path, sum, target);
+        }
+        
+        if(null != c.right){
+            res += DFS(c.right, path, sum, target);
+        }
+        
+        path.remove(path.size()-1);
+        
+        return res;
+    }
+    
+    public int pathSum(TreeNode root, int sum) {
+        
+        if(null == root)
+            return 0;
+            
+        List<Integer> path = new ArrayList<>();
+        
+        
+            
+        return DFS(root, path, 0, sum);
+        
+    }
+}

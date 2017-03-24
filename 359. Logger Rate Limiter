@@ -1,0 +1,29 @@
+public class Logger {
+
+    // 没有什么特别的
+    // 一个很简单的queue或者hashmap题
+    public static final int range = 10;
+
+    Map<String, Integer> stsm;
+    /** Initialize your data structure here. */
+    public Logger() {
+        stsm = new HashMap<>();
+    }
+    
+    /** Returns true if the message should be printed in the given timestamp, otherwise returns false.
+        If this method returns false, the message will not be printed.
+        The timestamp is in seconds granularity. */
+    public boolean shouldPrintMessage(int timestamp, String message) {
+        if(!stsm.containsKey(message) || timestamp - stsm.get(message) >= range || timestamp - stsm.get(message) < 0){
+            stsm.put(message, timestamp);
+            return true;
+        }
+        return false;
+    }
+}
+
+/**
+ * Your Logger object will be instantiated and called as such:
+ * Logger obj = new Logger();
+ * boolean param_1 = obj.shouldPrintMessage(timestamp,message);
+ */

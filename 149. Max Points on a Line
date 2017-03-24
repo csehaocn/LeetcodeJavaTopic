@@ -1,0 +1,96 @@
+/**
+ * Definition for a point.
+ * class Point {
+ *     int x;
+ *     int y;
+ *     Point() { x = 0; y = 0; }
+ *     Point(int a, int b) { x = a; y = b; }
+ * }
+ */
+public class Solution {
+    
+    // 要点
+    // 1. GCD pair
+    // 2. 斜率，正负 
+    // 3. Conor case. Overlap, vertical
+    // 4. 
+    
+    // 显然用斜率做Key是有精度问题的
+    // 虽然pass了
+    // 正确的做法应该是用除去最大公约数的pair
+    // 做key, 
+    // 同时要注意K的符号问题
+    // 也就是说, pair+符号才是正确解.
+    
+    // 另外的对点进行排序，按y轴
+    // 保证点访问的顺序，就可以保证斜率为正.
+    
+    // 我的程序里根本就没有考虑到斜率正负的问题.
+    
+    // 写算法的时候记得
+    // 写code的时候就会忘
+    // 写bug free code很重要啊
+    // 认真检查
+    //
+    // corner case 点重合.
+    public int maxPoints(Point[] points) {
+        if(null == points)
+            return 0;
+        
+        int len = points.length;
+        
+        if(len <= 2)
+            return len;
+        
+        Arrays.sort(points, new Comparator<Point>(){
+            
+            public int compare(Point l, Point r){
+                return l.x == r.x ? l.y - r.y : l.x - r.x;
+            }
+            
+        });
+        
+        int res = 0;
+        
+        for(int i = 0; i < len; ++i){
+            Map<Double, Integer> rcMap = new HashMap<>();
+            int cInfinite = 0;
+            int cOverLap = 0;
+            int roundMax = 0;
+            for(int j = i+1; j < len; ++j){
+                
+                if( (points[i].x == points[j].x) && (points[i].y == points[j].y) ){
+                    cOverLap++;
+                }
+                // Error: 忘记了忘记了忘记了。。。
+                else if(points[i].x == points[j].x)
+                    cInfinite++;
+                else{
+                    double ratio = (double)(points[i].y - points[j].y) / (double)(points[i].x - points[j].x);
+                
+                    if(!rcMap.containsKey(ratio)){
+                        rcMap.put(ratio, 1);
+                    }else{
+                        rcMap.put(ratio, rcMap.get(ratio) + 1);
+                    }
+                
+                    roundMax = Math.max(roundMax, rcMap.get(ratio));
+                }
+                
+            }
+            // Error: 错误不断啊
+            // 这个应该在前面
+            roundMax = Math.max(roundMax, cInfinite);
+            roundMax += cOverLap;
+            
+            
+            // System.out.println(res + " " + cOverLap);
+            // Error ..... 我的天, 你的神逻辑... 只有如果更新了才会添加overlap...
+            //res += cOverLap;
+            res = Math.max(res, roundMax);
+        }
+        
+        // Error: should be res + 1..
+        return res + 1;
+    }
+}

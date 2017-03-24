@@ -1,0 +1,63 @@
+public class Solution {
+    
+    // 更有趣的, apply XOR on both index and number
+    // 以及一个binary search的解法, 自己也写了一下
+    
+    private void swap(int[] nums, int i, int j){
+        if(i == j)
+            return;
+            
+        nums[i] = nums[i] ^ nums[j];
+        nums[j] = nums[i] ^ nums[j];
+        nums[i] = nums[i] ^ nums[j];
+        return;
+    }
+    
+    public int missingNumber(int[] nums) {
+        if(null == nums)
+            return -1;
+        for(int i = 0; i < nums.length; ++i){
+            if(nums[i] == i){
+                continue;
+            }else{
+                while(nums[i] != i && nums[i] != nums.length && nums[i] != nums[nums[i]] ){
+                    swap(nums, i, nums[i]);
+                }
+            }
+        }
+        
+        for(int i = 0; i < nums.length; ++i){
+            if(nums[i] != i){
+                return i;
+            }
+        }
+        return nums.length;
+    }
+}
+
+public class Solution {
+    public int missingNumber(int[] nums) {
+        
+        int len = nums.length;
+        if(0 == len)
+            return -1;
+        
+        Arrays.sort(nums);
+        
+        int l = 0;
+        int r = len;
+        while(l < r){
+            
+            int m = l + (r - l)/2;
+            if(nums[m] > m){
+                r = m;
+            }else{
+                l = m+1;
+            }
+            
+        }
+        
+        return l;
+        
+    }
+}

@@ -1,0 +1,64 @@
+public class Solution {
+    // "godding"
+    // gding
+    // 0
+    public int findRotateSteps(String ring, String key) {
+        if(null == ring || null == key)
+            return 0;
+        int lenR = ring.length();
+        int lenK = key.length();
+        
+        ArrayList<ArrayList<Integer>> l = new ArrayList<>();
+        for(int i = 0; i < 26; ++i){
+            l.add(new ArrayList());
+        }
+        
+        for(int i = 0; i < lenR; ++i){
+            int idxl = ring.charAt(i) - 'a';
+            l.get(idxl).add(i);
+        }
+        
+        Map<Integer, Integer> m = new HashMap<>();
+        // index, dist map
+        m.put(0, 0);
+        
+        // Error: k = 1
+        // 有不说清楚, 也不知道是第一步要自己走的....
+        for(int k = 0; k < lenK; ++k){
+            Map<Integer, Integer> nm = new HashMap<>();
+            char ck = key.charAt(k);
+            ArrayList<Integer> ckiList = l.get(ck - 'a');
+            for(int i : ckiList){
+                for(int pi : m.keySet()){
+                    int x = i - pi;
+                    int y = pi - i;
+                    if(x < 0)
+                        x += lenR;
+                    if(y < 0)
+                        y += lenR;
+                    int distMin = Math.min(x, y);
+                    // minDist from left or right
+                    int newValue = distMin + m.get(pi);
+                    // 之前那个getOrDefault出错了 原因暂时不明
+                    if(nm.containsKey(i))
+                        nm.put(i, Math.min(nm.get(i), newValue));
+                    else
+                        nm.put(i, newValue);
+                    // Error: 这里出错了....
+                    // nm.put(i, Math.min(m.getOrDefault(i, Integer.MAX_VALUE), newValue));
+                }
+            }
+            
+            // Error: 
+            
+            m = nm;
+        }
+        
+        Integer res = Integer.MAX_VALUE;
+        for(int i : m.keySet()){
+            int v = m.get(i);
+            res = Math.min(v, res);
+        }
+        return res + lenK;
+    }
+}

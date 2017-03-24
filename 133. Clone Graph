@@ -1,0 +1,40 @@
+/**
+ * Definition for undirected graph.
+ * class UndirectedGraphNode {
+ *     int label;
+ *     List<UndirectedGraphNode> neighbors;
+ *     UndirectedGraphNode(int x) { label = x; neighbors = new ArrayList<UndirectedGraphNode>(); }
+ * };
+ */
+public class Solution {
+    
+    // BFS版本的clone graph
+    // BFS用的少, 算法导轮上需要用white, graph, black
+    // 其实一个visited set + queue就够了
+    // 不同的是, visited set中元素的添加时间, 是作为children被添加的,
+    // 而不像一般DFS里面, 实际visit到了才添加. 
+    public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
+        // BFS version
+        if(null == node)
+            return null;
+        
+        Queue<UndirectedGraphNode> q = new LinkedList<>();
+        Map<UndirectedGraphNode, UndirectedGraphNode> ocMap = new HashMap<>();
+        ocMap.put(node, new UndirectedGraphNode(node.label));
+        // Error: 又忘记加进去了。。。
+        q.add(node);
+
+        while(!q.isEmpty()){
+            UndirectedGraphNode n = q.poll();
+            for(UndirectedGraphNode c : n.neighbors){
+                if(!ocMap.containsKey(c)){
+                    ocMap.put(c, new UndirectedGraphNode(c.label));
+                    q.add(c);
+                }
+                ocMap.get(n).neighbors.add(ocMap.get(c));
+            }
+        }
+        
+        return ocMap.get(node);
+    }
+}

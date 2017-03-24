@@ -1,0 +1,44 @@
+public class Solution {
+    // OK, 这里有一个应该是常见但是以前没有遇到过的错误
+    // 这个问题本来应该是3维DP
+    // 在缩减为2维dp的时候, 缩减的维度本来应该是2层
+    // 但是在用一层也可以的情况下
+    // 必须要找对更新的方向, 小的值不能被先更新了.
+    
+    // 这个错误其实翻过很多次, 就是状态在转移的时候要么开新的空间
+    // 不想开, 就好好想想更新的顺序
+    
+    public int findMaxForm(String[] strs, int m, int n) {
+        if(null == strs)
+            return 0;
+            
+        int len = strs.length;
+        if(0 == len)
+            return 0;
+        
+        int[][] dp = new int[m+1][n+1];
+        
+        for(int i = 0; i < len; ++i){
+            String s = strs[i];
+            int cz = 0;
+            int co = 0;
+            for(int j = 0; j < s.length(); ++j){
+                if('1' == s.charAt(j))
+                    co++;
+                else
+                    cz++;
+            }
+            for(int a = m - cz; a >= 0; --a){
+                for(int b = n - co; b >= 0; --b){
+                    // Error:  dp[a+cz][b+co] = dp[a][b] + 1
+                    // 对这个dp题目都没有分析清楚
+                    // 去max的目的是为了自己有两个选择
+                    // 可以用当前string, 也可以不用
+                    dp[a+cz][b+co] = Math.max(dp[a+cz][b+co], dp[a][b] + 1);
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+}

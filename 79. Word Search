@@ -1,0 +1,72 @@
+public class Solution {
+    public boolean exist(char[][] board, String word) {
+        
+        if(null == board)
+            return false;
+        
+        if(word.length() == 0)
+            return true;
+        
+        int m = board.length;
+        if(0 == m)
+            return false;
+        int n = board[0].length;
+        if(0 == n)
+            return false;
+        
+        boolean[][] visited = new boolean[m][n];
+        
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                // 我的天, if后面加了;, 导致一直return true;
+                if(DFS(board, visited, m, n, i, j, 0, word))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private boolean DFS(char[][] board, boolean[][] visited, int m, int n, int i, int j, int idx, String word){
+
+        // Error: 这个DFS判断是错的, 边界case, "a", 无路可走...
+        // 做的时候考虑过了, 但是脑子没有过过, "a"这样的case
+        // DFS出错的情况还是很多的
+        // 有没有能总结出一个保证不出错的DFS定式呢.
+        // DFS就四个不变的步骤
+        // 1. 判断valid
+        // 2. 判断终止
+        // 3. 判断添加答案
+        // 4. 转移探索.
+        // 这4个不走可以有不同的顺序, 写在DFS的不同地方.
+        // 可以一条一条的审查一下, 有没有可能出现, 实现不正确的地方
+        // 比如判断添加答案, 要求idx == word.length
+        // 那要是在正确解答中, idx没有办法reach word的length呢.
+        
+        //if(idx == word.length())
+        //    return true;
+            
+        if(visited[i][j] == false && board[i][j] == word.charAt(idx)){
+            if(idx + 1 == word.length())
+                return true;
+            visited[i][j] = true;
+            if(i > 0){
+                if(DFS(board, visited, m, n, i-1, j, idx+1, word)) return true;
+            }
+            if(j > 0){
+                if(DFS(board, visited, m, n, i, j-1, idx+1, word)) return true;
+            }
+            if(i < m-1){
+                if(DFS(board, visited, m, n, i+1, j, idx+1, word)) return true;
+            }
+            if(j < n-1){
+                if(DFS(board, visited, m, n, i, j+1, idx+1, word)) return true;
+            }
+            visited[i][j] = false;
+        }
+        
+        return false;
+        
+    }
+    
+}

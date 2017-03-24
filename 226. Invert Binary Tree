@@ -1,0 +1,60 @@
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+// 这种简单的题目确实有可能被要求iterative的
+// BFS固然简单
+// DFS如果脑子里面没有同时push left和push right的解法
+// 而采用TreeNode c + stack 的解法, 可能会很麻烦.
+// 其实或许也不会 见后面的解答
+    public TreeNode invertTree(TreeNode root) {
+        if(null == root)
+            return root;
+            
+        TreeNode l = invertTree(root.left);
+        TreeNode r = invertTree(root.right);
+        root.left = r;
+        root.right = l;
+        return root;
+    }
+}
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+public class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if(null == root)
+            return root;
+            
+        Stack<TreeNode> st = new Stack<>();
+        TreeNode c = root;
+        while(null != c || !st.isEmpty()){
+            if(c == null){
+                c = st.pop();
+            }else{
+                TreeNode t = c.left;
+                c.left = c.right;
+                c.right = t;
+                if(null != c.right){
+                    st.push(c.right);
+                }
+                c = c.left;
+            }
+        }
+        
+        return root;
+    }
+}

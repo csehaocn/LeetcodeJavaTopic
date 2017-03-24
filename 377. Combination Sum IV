@@ -1,0 +1,106 @@
+public class Solution {
+    
+    //  combination和permutation的数量问题都可以用dp, 这个是我之前没有想到的
+    // 但是反过来想想, 任何DFS问题, 都可以使用DP, 只要你能够有足够的空间来记录搜索路径
+    // 求全答案的一般不用DP, 因为需要的空间太大
+    // 但是DFS带返回单个值得, 肯定就是用DP了. 
+    
+        public int combinationSum4(int[] nums, int target) {
+            if(null == nums)
+                return 0;
+            int len = nums.length;
+            if(0 == len)
+                return target == 0 ? 1 : 0;
+                
+            Arrays.sort(nums);
+            
+            int[] dp = new int[target + 1];
+            for(int i = 0; i < target + 1; ++i)
+                dp[i]=-1;
+            
+            // we either initalize a dp[0] or judge the case when target == 0
+            dp[0] = 1;
+            
+            return DFSDP(nums, dp, target);
+            
+        }
+        
+        private int DFSDP(int[] nums, int[] dp, int target){
+            
+            if(-1 == dp[target]){
+                int res = 0;
+                for(int i = 0; i < nums.length; ++i){
+                    int k = target - nums[i];
+                    if(k >= 0){
+                        res += DFSDP(nums, dp, k);
+                    }else{
+                        break;
+                    }
+                }
+                dp[target] = res;
+            }
+            
+            return dp[target];
+        }
+    
+    /* 我的天, 这个不是combination, 是permutation啊
+       那么依然还是用dp, 但是感觉简单更多
+       
+    public int combinationSum4(int[] nums, int target) {
+        if(null == nums)
+            return 0;
+        int len = nums.length;
+        if(0 == len)
+            return target == 0 ? 1 : 0;
+        Arrays.sort(nums);
+    
+        int[][] dp = new int[target + 1][len];
+        
+        for(int i = 0; i < target + 1; ++i){
+            for(int j = 0; j < len ; ++j){
+                dp[i][j] = -1;
+            }
+        }
+        
+        DFSDP(nums, dp, target, len-1);
+        
+                
+        for(int i = 0; i < target + 1; ++i){
+            for(int j = 0; j < len ; ++j){
+                System.out.print(dp[i][j] + " ");
+            }
+            System.out.println();
+        }
+        
+        return 0;
+    }
+    
+    private int DFSDP(int[] nums, int[][] dp, int target, int idx){
+        
+        if(target < 0 || idx < 0)
+            return 0;
+        
+        if(-1 == dp[target][idx]){
+            if(0 == idx){
+                if(target % nums[0] == 0){
+                    dp[target][idx] = 1;
+                }else{
+                    dp[target][idx] = 0;
+                }
+            }else{
+                int n = 0;
+                int res = 0;
+                while(target - n > 0){
+                    res += DFSDP(nums, dp, target - n, idx-1);
+                    n += nums[idx];
+                }
+                dp[target][idx] = res;
+            }
+        }
+
+        
+        return dp[target][idx];
+        
+    }
+    */
+}

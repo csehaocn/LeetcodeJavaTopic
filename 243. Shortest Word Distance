@@ -1,0 +1,41 @@
+public class Solution {
+    public int shortestDistance(String[] words, String word1, String word2) {
+        // 哎, 要考虑各种边界条件, 要养成考虑边界条件的习惯
+        // 例如word1和word2相等的情况
+        // 总之简单的题目千万不能掉以轻心
+        // 越是简单, 恐怕越容易挂, 越是看思考边界条件的能力
+        
+        if(null == words || word1 == null || word2 == null)
+            return -1;
+        int len = words.length;
+        if(0 == len)
+            return -1;
+        // word1.equals(word2)
+
+        int idx1 = 0;
+        int idx2 = 0;
+        while(idx1 < len && !words[idx1].equals(word1)){
+            idx1++;
+        }
+        while(idx2 < len && !words[idx2].equals(word2)){
+            idx2++;
+        }
+        int res = idx1 == len || idx2 == len ? -1 : Math.abs(idx1 - idx2);
+        while(idx1 < len && idx2 < len){
+            res = Math.min(res, Math.abs(idx1 - idx2));
+            if(idx1 < idx2){
+                // Error: 忘记了自增, 死循环....
+                idx1++;
+                while(idx1 < len && !words[idx1].equals(word1)){
+                    idx1++;
+                }
+            }else{
+                idx2++;
+                while(idx2 < len && !words[idx2].equals(word2)){
+                    idx2++;
+                }
+            }
+        }
+        return res;
+    }
+}

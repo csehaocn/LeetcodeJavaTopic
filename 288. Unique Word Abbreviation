@@ -1,0 +1,50 @@
+public class ValidWordAbbr {
+
+    // 随便一个简单的题目就bug不断
+    // 根本就没有想清楚题目的本质在哪里
+    
+    
+    Map<String, Integer> abre;
+    Set<String> dict;
+    
+    private String encode(String s){
+        int len = s.length();
+        if( len <= 2)
+            return s;
+        else
+            return "" + s.charAt(0) + "" + (len-2) + "" + s.charAt(len-1);
+    }
+
+    public ValidWordAbbr(String[] dictionary) {
+        if(null == dictionary)
+            return;
+        
+        abre = new HashMap<>();
+        dict = new HashSet<>();
+        for(String s : dictionary)
+            dict.add(s);
+        
+        
+        for(String s : dict){
+            String code = encode(s);
+            if(abre.containsKey(code)){
+                abre.put(code, abre.get(code)+1);
+            }else
+                abre.put(code, 1);
+        }
+    }
+    
+    public boolean isUnique(String word) {
+        String s = encode(word);
+        if(!dict.contains(word) && !abre.containsKey(s) || dict.contains(word) && abre.containsKey(s) && abre.get(s) == 1)
+            return true;
+        else
+            return false;
+    }
+}
+
+/**
+ * Your ValidWordAbbr object will be instantiated and called as such:
+ * ValidWordAbbr obj = new ValidWordAbbr(dictionary);
+ * boolean param_1 = obj.isUnique(word);
+ */

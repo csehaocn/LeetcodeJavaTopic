@@ -1,0 +1,18 @@
+public class Solution {
+    public int minMoves(int[] nums) {
+        if(null == nums)
+            return 0;
+            
+        int m = nums[0];
+        
+        for(int i : nums){
+            m = Math.min(m, i);
+        }
+        
+        int res = 0;
+        for(int i : nums){
+            res += i - m;
+        }
+        return res;
+    }
+}

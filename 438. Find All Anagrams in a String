@@ -1,0 +1,93 @@
+public class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        // sliding window methods
+        if(null == s || null == p)
+            return null;
+    
+         int lenS = s.length();
+         int lenP = p.length();
+         List<Integer> res = new ArrayList<>();
+         
+         if(lenP > lenS)
+            return res;
+            
+        int[] pcArr = new int[256];
+        int[] scArr = new int[266];
+
+        for(int i = 0; i < lenP; ++i){
+            
+            pcArr[(int)p.charAt(i)]++;
+            
+        }
+        
+        int diff = lenP;
+        
+        for(int i = 0; i < lenP; ++i){
+            scArr[(int)s.charAt(i)]++;
+            diff += scArr[(int)s.charAt(i)] <= pcArr[(int)s.charAt(i)] ? -1 : 1;
+        }
+        
+        /*
+        
+        for(int j = lenP; j < lenS; ++j){
+            
+            // Error: if else...
+            // if(0 == diff)
+            // Make the diff doesn't change at all
+            // Error2: the end judgement was ignored...
+            if(0 == diff){
+                res.add(j - lenP);
+            }
+            
+            // remove
+            int il = (int)s.charAt(j-lenP);
+            int ir = (int)s.charAt(j);
+            scArr[il]--;
+            diff += scArr[il] >= pcArr[il] ? -1 : 1;
+            // add
+            scArr[ir]++;
+            diff += scArr[ir] <= pcArr[ir] ? -1 : 1;
+            
+        }
+        
+        // Error2: the end judgement was ignored...
+        if(0 == diff){
+            res.add(lenS - lenP);
+        }
+        
+        return res;
+        */
+        
+        // This organization of code is better
+        // Judge after the initialization of sliding window first
+        // Then move once judge once.
+        // But node that you have to add(j + 1 - lenP) 
+        // Because it is working on the next sliding window already.
+        if(0 == diff){
+            res.add(0);
+        }
+        
+        for(int j = lenP; j < lenS; ++j){
+            
+            // Error: if else...
+            // if(0 == diff)
+            // Make the diff doesn't change at all
+            // Error2: the end judgement was ignored...
+            
+            // remove
+            int il = (int)s.charAt(j-lenP);
+            int ir = (int)s.charAt(j);
+            scArr[il]--;
+            diff += scArr[il] >= pcArr[il] ? -1 : 1;
+            // add
+            scArr[ir]++;
+            diff += scArr[ir] <= pcArr[ir] ? -1 : 1;
+            
+            if(0 == diff){
+                res.add(j + 1 - lenP);
+            }
+        }
+        
+        return res;
+    }
+}

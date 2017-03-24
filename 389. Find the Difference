@@ -1,0 +1,20 @@
+public class Solution {
+
+// 更有趣的答案包括bit manipulation.
+// 另从这个题可以看出, int和char直接转换是没什么问题的. 
+// 任何char转换以后都小于256
+    public char findTheDifference(String s, String t) {
+        int[] c = new int[256];
+        for(int i = 0; i < s.length(); ++i){
+            c[(int)s.charAt(i)]++;
+            c[(int)t.charAt(i)]--;
+        }
+        c[(int)t.charAt(t.length()-1)]--;
+        for(int i = 0; i < 256; ++i){
+            if(-1 == c[i]){
+                return (char)i;
+            }
+        }
+        return ' ';
+    }
+}

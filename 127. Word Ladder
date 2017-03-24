@@ -1,0 +1,89 @@
+public class Solution {
+    
+    // 双向BFS时, 要统一成一个函数, interface需要的参数还是挺tricky的, 其他的没有什么难点
+    // 需要两个queue, 两个visited set 
+    
+    // From Other's Code
+    // 其实BFS的Queue完全可以用Set来做, 不像Dijstra, 是不用什么顺序的, 当然用Set也并没有带来什么好处.
+    // 然而在双向BFS的时候好处就有了, 因为你可以向Set Query contains, 你就不用单独维护两个visited set, 
+    // 而直接向对方的frontier set query contains就可以了. 
+    // 只需要一个visited set来做去重
+    
+    // 当然我并不认为这个是他更快的原因, 大部分的原因是因为搜索交换, 总是搜索比较小的那个frontier
+    
+    // 当然还要记住char也是可以遍历的 for(char cj = 'a'; cj < 'z'; ++cj)
+    
+    // 做到了这些以后 beat了97%的code
+    // 而且双向BFS还是明显比单向FBS快很多的
+    // 在这些test case中, 快了四倍以上, 还是很make sense的.
+    
+    public static final int aLen = 26;
+    
+    private boolean expand(Set<String> wordSet, Set<String> vself, Set<String> vother, Queue<String> q){
+        // assert !q.isEmpty()
+        int len = q.size();
+        for(int i = 0; i < len; ++i){
+            String s = q.poll();
+            char[] ca = s.toCharArray();
+            for(int k = 0; k < s.length(); ++k){
+                char c = s.charAt(k);
+                for(char cj = 'a'; cj < 'z'; ++cj){
+                    if(cj != c){
+                        ca[k] = (char)(cj);
+                        String st = new String(ca);
+                        if(wordSet.contains(st) && !vself.contains(st)){
+                            q.add(st);
+                            vself.add(st);
+                            if(vother.contains(st))
+                                return true;
+                        }
+                    }
+                }
+            ca[k] = c;
+            }
+        }
+        
+        return false;
+    }
+    
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        // Double End BFS
+        if(null == beginWord || null == endWord || null == wordList)
+            return 0;
+        
+        if(beginWord == endWord)
+            return 0;
+        
+        Queue<String> hq = new LinkedList<>();
+        Queue<String> tq = new LinkedList<>();
+        hq.offer(beginWord);
+        tq.offer(endWord);
+        Set<String> hv = new HashSet<>();
+        Set<String> tv = new HashSet<>();
+        hv.add(beginWord);
+        tv.add(endWord);
+        Set<String> wordSet = new HashSet<>(wordList);
+        
+        if(!wordSet.contains(endWord))
+            return 0;
+        
+        int len = 1;
+        
+        while(!hq.isEmpty()&&!tq.isEmpty()){
+            
+            if(hq.size() < tq.size()){
+                boolean hr = expand(wordSet, hv, tv, hq);
+                len++;
+                if(hr)
+                    return len;
+            }else{
+                boolean tr = expand(wordSet, tv, hv, tq);
+                len++;
+                if(tr)
+                    return len;
+            }
+        }
+        
+        return 0;
+    }
+}

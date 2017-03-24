@@ -1,0 +1,76 @@
+public class Solution {
+    
+    long[] dp;
+    int[][] d;
+    int m;
+    int n;
+    
+    public int calculateMinimumHP(int[][] dungeon) {
+        // Binary Search Version
+        if(null == dungeon)
+            return 0;
+        
+        if(0 == dungeon.length || 0 == dungeon[0].length)
+            return 0;
+        
+        m = dungeon.length;
+        n = dungeon[0].length;
+        dp = new long[n];
+        d = dungeon;
+        
+        long l = 1;
+        // Error: Integer.MAX_VALUE + 1 overflow了, 要先转换成long...
+        long r = (long)Integer.MAX_VALUE+1;
+        
+        // N: check
+        while(l < r){
+            
+            long m = l + (r-l)/2;
+
+            if(canRescue(m)){
+                r = m;
+            }else{
+                l = m + 1;
+            }
+            
+        }
+        
+        if(l > Integer.MAX_VALUE)
+            return -1;
+        
+        return (int)l;
+    }
+    
+    private boolean canRescue(long init){
+        /*
+        
+        // Error: 忘记重置again....
+        boolean can = false;
+        dp = new long[n];
+        dp[0] = init + d[0][0];
+        // Error: 忘记在这里加判断.
+        if(dp[0] > 0)
+            can = true;
+        */
+        // 这个题目的要求是路径上所有的点都大于0,
+        // 哎, 以前没遇到过, 疏忽了
+        
+        dp = new long[n];
+        dp[0] = init + d[0][0];
+        for(int j = 1; j < n; ++j){
+            dp[j] = dp[j-1] <= 0 ? 0 : dp[j-1] + d[0][j];
+        }
+        for(int i = 1; i < m; ++i){
+            dp[0] = dp[0] <= 0 ? 0 : dp[0] + d[i][0];
+            for(int j = 1; j < n; ++j){
+                if(dp[j] <= 0 && dp[j-1] <= 0){
+                    dp[j] = 0;
+                }else{
+                    dp[j] = Math.max(dp[j], dp[j-1]) + d[i][j];
+                }
+            }
+        }
+        
+        return dp[n-1] > 0;
+    }
+}

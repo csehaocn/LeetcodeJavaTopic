@@ -1,0 +1,51 @@
+public class Solution {
+    
+    static final Integer mod = 1337;
+    
+    private int superPowUtil(int a, int b){
+        
+        // assert b > 0
+        
+        // Error: 还是忘记边界条件了.
+        if(a == 0)
+            return 0;
+        if(b == 0)
+            return 1;
+        
+        a %= mod;
+        
+        int res = 1;
+        
+        while(b > 1){
+            
+            if(b%2 == 1)
+                res = (res * a) % mod;
+            a = (a * a) % mod;
+            b /= 2;
+        }
+        
+        return (res * a) % mod;
+    }
+    
+    public int superPow(int a, int[] b) {
+        
+        if(null == b)
+            return 0;
+        
+        int len = b.length;
+        if(0 == len)
+            return 1;
+        
+        int res = superPowUtil(a, b[0]);
+        
+        //System.out.println(res);
+        
+        for(int i = 1; i < len; ++i){
+            //System.out.println(superPowUtil(res, 10));
+            res = ( superPowUtil(res, 10) * superPowUtil(a, b[i]) ) % mod;
+        }
+        
+        return res;
+        
+    }
+}

@@ -1,0 +1,107 @@
+public class Solution {
+    public boolean canPartition(int[] nums) {
+        // 我的天, 这种集合都可以用DP
+        // 首先这个题目的DP做法肯定是错的
+        // 而其可以考虑成为一个summary并继续推广题
+        
+        // 类似于很多其他题目, 用HashSet, TreeSet, 最大最小值总结前面的结果,
+        // 并把新的结果加入集合里，因为求和是有很多重复结果的，所以可以简化队列
+        
+        // 不管怎么说, 其实总是比DFS快的
+        // 特别对于求和这种问题, 是肯定可以做部分序列总结, 不需要DFS的
+        if(null == nums)
+            return false;
+        
+        int len = nums.length;
+    
+        if(0 == len)
+            return false;
+        
+        if(null == nums)
+            return false;
+            
+        if( 0 == len)
+            return false;
+        
+        int sum = 0;
+        for(int i : nums){
+            sum += i;
+        }
+        
+        if(sum % 2 == 1){
+            return false;
+        }
+        
+        sum /= 2;
+        
+        Set<Integer> sumS = new HashSet<>();
+        sumS.add(0);
+        
+        for(int i = 0; i < len; ++i){
+            int n = nums[i];
+            Set<Integer> nS = new HashSet<>();
+            for(int s : sumS){
+                nS.add(s);
+                nS.add(n + s);
+            }
+            if(nS.contains(sum)){
+                return true;
+            }
+            sumS = nS;
+        }
+        
+        return false;
+        
+    }
+        // 鬼知道
+        
+        // Get sum, hope it is not overflowed.
+        // Let's first consider case when sum is not overflowed.
+        
+        // Overflowed:
+        // 1. Use BigInteger
+        // 2. Positive Negative DFS, complexity much bigger.
+        
+        /*
+        
+        if(null == nums)
+            return false;
+            
+        int len = nums.length;
+        if( 0 == len)
+            return false;
+        
+        int sum = 0;
+        for(int i : nums){
+            sum += i;
+        }
+        
+        if(sum % 2 == 1){
+            return false;
+        }
+        
+        sum /= 2;
+        Arrays.sort(nums);
+        // Reverse might be a better practice.
+        
+        return DFS(nums, 0, 0, sum);
+    }
+    
+    private boolean DFS(int[] nums, int idx, int pathSum, int sum){
+        // addself then judge
+        if(pathSum == sum)
+            return true;
+        
+        if(pathSum > sum || idx >= nums.length)
+            return false;
+        // don't add current
+        if(DFS(nums, idx + 1, pathSum, sum))
+            return true;
+        if(DFS(nums, idx + 1, pathSum + nums[idx], sum))
+            return true;
+            
+        return false;
+        
+    }
+    */
+}

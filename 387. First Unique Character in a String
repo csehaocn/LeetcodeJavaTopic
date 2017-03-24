@@ -1,0 +1,25 @@
+public class Solution {
+// 就是暴力解法 2遍
+// 当然也有个slow fast的版本
+// 但是slow要check当前count是否>1 many遍
+    public int firstUniqChar(String s) {
+        if(null == s)
+            return 0;
+        int len = s.length();
+        if(0 == len)
+            return -1;
+        
+        char[] ca = s.toCharArray();
+        int[] count = new int[256];
+        
+        int slow = 0;
+        int fast = 0;
+        while( fast < len){
+            count[(int)ca[fast]]++;
+            fast++;
+            while(slow < fast && count[(int)ca[slow]] > 1)
+                slow++;
+        }
+        return (slow < len && (count[(int)ca[slow]] == 1)) ? slow : -1;
+    }
+}

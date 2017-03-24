@@ -1,0 +1,62 @@
+public class Solution {
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        if(null == maze)
+            return true;
+        int m = maze.length;
+        if(0 == m)
+            return false;
+        int n = maze[0].length;
+        if(0 == n)
+            return false;
+        Set<String> visited = new HashSet<>();
+        
+        return DFS(maze, m, n, start[0], start[1], destination[0], destination[1], visited);
+        
+    }
+    
+    private boolean DFS(int[][] maze, int m, int n, int i, int j, int di, int dj, Set<String> visited){
+        
+        if(i == di && j == dj){
+            return true;
+        }
+        
+        if(visited.contains(i + " " + j)){
+            return false;
+        }
+        
+        visited.add(i + " " + j);
+        
+        int x = i;
+        int y = j;
+        boolean ret = false;
+        while(x < m && 0 == maze[x][y]) x++;
+        x--;
+        if(x != i)
+            ret = DFS(maze, m, n, x, y, di, dj, visited);
+        if(ret) return true;
+        
+        x = i;
+        while(x >= 0 && 0 == maze[x][y]) x--;
+        x++;
+        if(x != i)
+            ret = DFS(maze, m, n, x, y, di, dj, visited);
+        if(ret) return true;
+        
+        x = i;
+        while(y < n && 0 == maze[x][y]) y++;
+        y--;
+        if(y != j)
+            ret = DFS(maze, m, n, x, y, di, dj, visited);
+        if(ret) return true;
+        
+        y = j;
+        while(y >= 0 && 0 == maze[x][y]) y--;
+        y++;
+        if(y != j)
+            ret = DFS(maze, m, n, x, y, di, dj, visited);
+        if(ret) return true;
+        
+        return false;
+    }
+    
+}

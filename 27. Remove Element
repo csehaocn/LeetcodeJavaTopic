@@ -1,0 +1,26 @@
+public class Solution {
+    public int removeElement(int[] nums, int val) {
+        if(null == nums)
+            return 0;
+            
+        int len = nums.length;
+        if(0 == len)
+            return 0;
+        
+        int r = len-1;
+        int l = 0;
+        
+        while(l <= r){
+            if(nums[l] == val){
+                int t = nums[r];
+                nums[r] = nums[l];
+                nums[l] = t;
+                r--;
+            }else{
+                l++;
+            }
+        }
+        
+        return l;
+    }
+}
